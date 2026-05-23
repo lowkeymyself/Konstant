@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONSTANT — Access</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
+
+    canvas#dot-matrix { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    .corner { position: fixed; font-size: 10px; letter-spacing: 0.15em; color: var(--muted2); font-family: var(--font-mono); z-index: 10; }
+    .corner.tl { top: 24px; left: 28px; }
+    .corner.tr { top: 24px; right: 28px; }
+    .corner.bl { bottom: 24px; left: 28px; }
+    .corner.br { bottom: 24px; right: 28px; }
+
+    /* card */
+    .auth-card {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 420px;
+      padding: 48px 40px;
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: var(--r-lg);
+      animation: cardIn 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* corner brackets */
+    .card-bracket {
+      position: absolute;
+      width: 16px; height: 16px;
+      border-color: var(--border2);
+      border-style: solid;
+    }
+    .card-bracket.tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-radius: var(--r-lg) 0 0 0; }
+    .card-bracket.tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; border-radius: 0 var(--r-lg) 0 0; }
+    .card-bracket.bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; border-radius: 0 0 0 var(--r-lg); }
+    .card-bracket.br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-radius: 0 0 var(--r-lg) 0; }
+
+    .auth-logo {
+      font-family: var(--font-title);
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 6px;
+      text-align: center;
+      animation: flicker 6s ease infinite;
+    }
+
+    /* slashed O */
+    .auth-logo .so {
+      position: relative;
+      display: inline-block;
+    }
+    .auth-logo .so::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0.05em; height: 120%;
+      background: var(--text);
+      transform: translate(-50%, -50%) rotate(-28deg);
+      pointer-events: none;
+    }
+
+    .auth-sub {
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--muted2);
+      text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+
+    .field-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-wrap .input {
+      padding-right: 44px;
+    }
+
+    .toggle-vis {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted2);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 4px;
+      transition: color var(--transition);
+      font-family: var(--font-mono);
+      letter-spacing: 0;
+    }
+    .toggle-vis:hover { color: var(--text); }
+
+    .auth-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      border-radius: var(--r-sm);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+      margin-top: 4px;
+    }
+
+    .auth-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.12);
+      transform: translateX(-101%);
+      transition: transform 0.4s ease;
+    }
+    .auth-btn:hover::after { transform: translateX(0); }
+    .auth-btn:active { transform: scale(0.98); }
+
+    /* loading state */
+    .auth-btn.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .auth-btn.loading::before {
+      content: '';
+      display: inline-block;
+      width: 12px; height: 12px;
+      border: 1.5px solid rgba(0,0,0,0.3);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      margin-top: 14px;
+      font-size: 11px;
+      color: var(--red);
+      text-align: center;
+      letter-spacing: 0.05em;
+      min-height: 16px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .error-msg.show { opacity: 1; transform: translateY(0); }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 28px 0;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted2);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      transition: color var(--transition);
+    }
+    .back-link:hover { color: var(--text); }
+
+    /* shake on wrong pw */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%       { transform: translateX(-6px); }
+      40%       { transform: translateX(6px); }
+      60%       { transform: translateX(-4px); }
+      80%       { transform: translateX(4px); }
+    }
+    .shake { animation: shake 0.4s ease; }
+
+    /* particle burst on success */
+    .particle {
+      position: fixed;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--text);
+      pointer-events: none;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scanline"></div>
+  <canvas id="dot-matrix"></canvas>
+  <div id="toast"></div>
+
+  <div class="corner tl">ACCESS</div>
+  <div class="corner tr" id="corner-time"></div>
+  <div class="corner bl">KONSTANT</div>
+  <div class="corner br">AUTH</div>
+
+  <div class="auth-card" id="card">
+    <div class="card-bracket tl"></div>
+    <div class="card-bracket tr"></div>
+    <div class="card-bracket bl"></div>
+    <div class="card-bracket br"></div>
+
+    <div class="auth-logo">K<span class="so">O</span>NSTANT</div>
+    <div class="auth-sub">Access Required</div>
+
+    <div class="field-label">Key</div>
+    <div class="input-wrap">
+      <input class="input" type="password" id="pw-input" placeholder="enter access key" autocomplete="off" spellcheck="false">
+      <button class="toggle-vis" id="toggle-vis" title="show/hide">show</button>
+    </div>
+
+    <button class="auth-btn" id="auth-btn">
+      <span id="auth-btn-text">Verify</span>
+    </button>
+
+    <div class="error-msg" id="error-msg">Invalid key. Try again.</div>
+
+    <div class="divider"></div>
+    <a href="index.html" class="back-link">back to docs</a>
+  </div>
+
+  <script>
+    // ---- dot matrix ----
+    const canvas = document.getElementById('dot-matrix');
+    const ctx = canvas.getContext('2d');
+    let W, H, dots = [];
+    const DS = 28;
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      dots = [];
+      for (let r = 0; r < Math.ceil(H/DS)+1; r++)
+        for (let c = 0; c < Math.ceil(W/DS)+1; c++)
+          dots.push({ x: c*DS, y: r*DS, a: Math.random() });
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    let mx = -9999, my = -9999;
+    window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    (function frame(ts) {
+      ctx.clearRect(0, 0, W, H);
+      for (const d of dots) {
+        const dx = d.x - mx, dy = d.y - my;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        const prox = Math.max(0, 1 - dist/180);
+        const pulse = 0.5 + 0.5*Math.sin(ts*0.001 + d.x*0.04 + d.y*0.04);
+        const a = Math.min(1, d.a*0.25 + prox*0.65 + pulse*0.06);
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, (0.6 + prox*2)*0.6, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(255,255,255,${a})`;
+        ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    })(0);
+
+    // ---- clock ----
+    function tick() {
+      const n = new Date();
+      document.getElementById('corner-time').textContent =
+        n.getHours().toString().padStart(2,'0') + ':' +
+        n.getMinutes().toString().padStart(2,'0') + ':' +
+        n.getSeconds().toString().padStart(2,'0');
+    }
+    tick(); setInterval(tick, 1000);
+
+    // ---- auto-redirect if already authed ----
+    if (localStorage.getItem('k_auth') === '1') {
+      window.location.href = 'dashboard.html';
+    }
+
+    // ---- show/hide toggle ----
+    const pwInput = document.getElementById('pw-input');
+    const toggleVis = document.getElementById('toggle-vis');
+    toggleVis.addEventListener('click', () => {
+      const hidden = pwInput.type === 'password';
+      pwInput.type = hidden ? 'text' : 'password';
+      toggleVis.textContent = hidden ? 'hide' : 'show';
+    });
+
+    // ---- auth logic ----
+    // password: LSEAutomated -> base64 -> TFNFQXVub21hdGVk
+    // wait, let me recalculate: btoa('LSEAutomated') = 'TFNFQXV0b21hdGVk'
+    const ENCODED = 'TFNFQXV0b21hdGVk';
+
+    function showError(msg) {
+      const el = document.getElementById('error-msg');
+      el.textContent = msg;
+      el.classList.add('show');
+      document.getElementById('card').classList.add('shake');
+      setTimeout(() => document.getElementById('card').classList.remove('shake'), 400);
+    }
+
+    function hideError() {
+      document.getElementById('error-msg').classList.remove('show');
+    }
+
+    function toast(msg, duration = 2800) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), duration);
+    }
+
+    function burst() {
+      for (let i = 0; i < 18; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+        p.style.left = cx + 'px';
+        p.style.top  = cy + 'px';
+        document.body.appendChild(p);
+        const angle = (Math.PI * 2 / 18) * i;
+        const dist  = 80 + Math.random() * 100;
+        const tx    = Math.cos(angle) * dist;
+        const ty    = Math.sin(angle) * dist;
+        p.animate([
+          { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 },
+          { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0)`, opacity: 0 }
+        ], { duration: 600 + Math.random()*400, easing: 'cubic-bezier(0,0,0.2,1)', fill: 'forwards' })
+          .onfinish = () => p.remove();
+      }
+    }
+
+    function verify() {
+      const val = pwInput.value.trim();
+      if (!val) { showError('Enter a key first.'); return; }
+
+      hideError();
+      const btn = document.getElementById('auth-btn');
+      const btnText = document.getElementById('auth-btn-text');
+      btn.classList.add('loading');
+      btnText.textContent = 'Verifying...';
+
+      // small artificial delay for effect
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        btnText.textContent = 'Verify';
+
+        // decode the stored encoded key and compare
+        let decoded = '';
+        try { decoded = atob(ENCODED); } catch(e) { decoded = ''; }
+
+        if (val === decoded) {
+          localStorage.setItem('k_auth', '1');
+          burst();
+          btnText.textContent = 'Granted';
+          btn.style.background = 'var(--green)';
+          toast('Access granted. Loading...');
+          setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
+        } else {
+          showError('Invalid key. Try again.');
+          pwInput.value = '';
+          pwInput.focus();
+        }
+      }, 600);
+    }
+
+    document.getElementById('auth-btn').addEventListener('click', verify);
+    pwInput.addEventListener('keydown', e => { if (e.key === 'Enter') verify(); });
+    pwInput.addEventListener('input', hideError);
+  </script>
+  <script src="favicon.js"></script>
+</body>
+</html>

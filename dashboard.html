@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONSTANT — Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    
+    canvas#dot-matrix { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ---- Sidebar ---- */
+    .sidebar {
+      width: 280px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      position: relative;
+    }
+
+    .brand {
+      padding: 32px 24px;
+      font-family: var(--font-title);
+      font-weight: 800;
+      font-size: 24px;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand .so { position: relative; display: inline-block; }
+    .brand .so::after {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      width: 0.05em; height: 120%; background: var(--text);
+      transform: translate(-50%, -50%) rotate(-28deg); pointer-events: none;
+    }
+
+    .nav-tabs {
+      flex: 1;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 14px 16px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--r-sm);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      text-align: left;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .tab-btn:hover { background: rgba(255,255,255,0.02); color: var(--text); }
+    .tab-btn.active {
+      background: var(--surface);
+      border-color: var(--border2);
+      color: var(--text);
+    }
+
+    .tab-btn .left { display: flex; align-items: center; gap: 10px; }
+
+    .sidebar-footer {
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted2);
+      letter-spacing: 0.1em;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #sync-status {
+      display: inline-block;
+      color: var(--blue);
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    #sync-status.show { opacity: 1; }
+
+    /* ---- Main Content ---- */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 10;
+      overflow-y: auto;
+    }
+
+    .top-bar {
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8, 8, 8, 0.6);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .page-title {
+      font-family: var(--font-title);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .page-meta {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .version-tag {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      padding: 4px 10px;
+      border-radius: var(--r-sm);
+      color: var(--accent2);
+    }
+
+    .content-pad {
+      padding: 48px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .warning-banner {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: var(--warn);
+      padding: 16px 20px;
+      border-radius: var(--r-sm);
+      margin-bottom: 32px;
+      font-size: 13px;
+      display: none; /* Only shown in testing tab */
+      align-items: center;
+      gap: 12px;
+    }
+    .warning-banner.show { display: flex; }
+    .warning-banner::before {
+      content: '!';
+      display: flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--warn); color: var(--bg);
+      font-weight: bold; font-size: 12px;
+    }
+
+    .box-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    /* ---- Apple Mograph & Mac Buttons ---- */
+    .tab-panel { display: none; opacity: 0; transform: translateY(12px) scale(0.98); }
+    .tab-panel.active { display: block; animation: mographIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    
+    @keyframes mographIn {
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .code-box {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: var(--r-lg);
+      overflow: clip;
+      margin-bottom: 40px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    
+    .code-box-header {
+      background: var(--surface);
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .code-dots { display: flex; gap: 8px; }
+    .code-dots span { width: 12px; height: 12px; border-radius: 50%; }
+    .code-dots span:nth-child(1) { background: #ff5f56; box-shadow: 0 0 0 1px #e0443e inset; }
+    .code-dots span:nth-child(2) { background: #ffbd2e; box-shadow: 0 0 0 1px #dea123 inset; }
+    .code-dots span:nth-child(3) { background: #27c93f; box-shadow: 0 0 0 1px #1aab29 inset; }
+
+    .code-box-content {
+      padding: 24px 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text);
+      word-break: break-all;
+      line-height: 1.6;
+    }
+
+    .src-view { display: none; white-space: pre-wrap; color: #a0a0a0; font-size: 12px; }
+    .load-view { display: block; color: var(--accent); }
+
+    .code-box-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border2);
+      background: rgba(14, 14, 14, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      position: sticky;
+      bottom: 0;
+      z-index: 10;
+    }
+
+    /* Typewriter Cursor */
+    .typewriter-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: var(--text);
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 10px 20px;
+      border-radius: var(--r-sm);
+      z-index: 10000;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  </style>
+</head>
+<body>
+
+  <canvas id="dot-matrix"></canvas>
+  <div id="toast"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">K<span class="so">O</span>NSTANT</div>
+    
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-target="release">
+        <div class="left">
+          <span class="dot" id="dot-release"></span>
+          <span>Konstant Release</span>
+        </div>
+      </button>
+
+      <button class="tab-btn" data-target="testing">
+        <div class="left">
+          <span class="dot" id="dot-testing"></span>
+          <span>Konstant Testing</span>
+        </div>
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div id="sync-status">Synced!</div>
+      <div id="last-updated">Last checked: Just now</div>
+      <a href="index.html" style="color:var(--muted2); text-decoration:none; margin-top:8px;">Sign out</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    
+    <div class="top-bar">
+      <div class="page-title" id="page-title">Release Branch</div>
+      <div class="page-meta">
+        <div class="version-tag" id="top-version">v---</div>
+      </div>
+    </div>
+
+    <div class="content-pad">
+      
+      <!-- RELEASE PANEL -->
+      <div class="tab-panel active" id="panel-release">
+        <div class="box-title">Execution String</div>
+        
+        <div class="code-box">
+          <div class="code-box-header">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <div style="font-size:11px; color:var(--muted);">Lua</div>
+          </div>
+          <div class="code-box-content" id="code-release">
+            <div class="load-view">loadstring(game:HttpGet("https://raw.githubusercontent.com/lowkeymyself/HowToAccountJadeShipClaudeTryHackMe/refs/heads/main/ins.lua"))()</div>
+            <div class="src-view"></div>
+          </div>
+          <div class="code-box-footer">
+            <button class="btn btn-ghost" id="btn-src-release"><span>Show Source</span></button>
+            <button class="btn btn-primary" id="btn-copy-release"><span>Copy</span></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TESTING PANEL -->
+      <div class="tab-panel" id="panel-testing">
+        <div class="warning-banner show">
+          WARNING: Testing build. Features are incomplete, bugs are expected, and the script may update live while playing.
+        </div>
+
+        <div class="box-title">Execution String (Testing)</div>
+        
+        <div class="code-box" style="border-color: rgba(245, 158, 11, 0.3);">
+          <div class="code-box-header" style="background: rgba(245, 158, 11, 0.05);">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <div style="font-size:11px; color:var(--warn);">Lua - Testing Branch</div>
+          </div>
+          <div class="code-box-content" id="code-testing">
+            <div class="load-view">loadstring(game:HttpGet("https://raw.githubusercontent.com/lowkeymyself/HowToAccountJadeShipClaudeTryHackMe/refs/heads/main/tes.lua"))()</div>
+            <div class="src-view"></div>
+          </div>
+          <div class="code-box-footer">
+            <button class="btn btn-ghost" id="btn-src-testing"><span>Show Source</span></button>
+            <button class="btn btn-primary" id="btn-copy-testing"><span>Copy</span></button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Auth Check
+    if (localStorage.getItem('k_auth') !== '1') {
+      window.location.href = 'auth.html';
+    }
+
+    // Dot matrix
+    const canvas = document.getElementById('dot-matrix');
+    const ctx = canvas.getContext('2d');
+    let W, H, dots = [];
+    const DS = 28;
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      dots = [];
+      for (let r = 0; r < Math.ceil(H/DS)+1; r++)
+        for (let c = 0; c < Math.ceil(W/DS)+1; c++)
+          dots.push({ x: c*DS, y: r*DS, a: Math.random() });
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    let mx = -9999, my = -9999;
+    window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    (function frame(ts) {
+      ctx.clearRect(0, 0, W, H);
+      for (const d of dots) {
+        const dx = d.x - mx, dy = d.y - my;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        const prox = Math.max(0, 1 - dist/180);
+        const a = Math.min(1, d.a*0.2 + prox*0.5);
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, (0.6 + prox*1.5)*0.6, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(255,255,255,${a})`;
+        ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    })(0);
+
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    // State
+    const state = {
+      relSrc: null,
+      tesSrc: null,
+      relVer: 'v---',
+      tesVer: 'v---'
+    };
+
+    // UI elements
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+    const pageTitle = document.getElementById('page-title');
+    const topVer = document.getElementById('top-version');
+
+    tabs.forEach(t => {
+      t.addEventListener('click', () => {
+        tabs.forEach(x => x.classList.remove('active'));
+        panels.forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+        
+        const target = t.dataset.target;
+        document.getElementById(`panel-${target}`).classList.add('active');
+        
+        pageTitle.textContent = target === 'release' ? 'Release Branch' : 'Testing Branch';
+        topVer.textContent = target === 'release' ? state.relVer : state.tesVer;
+      });
+    });
+
+    // Typewriter effect
+    function typewriter(el, text) {
+      el.innerHTML = '';
+      const cursor = document.createElement('span');
+      cursor.className = 'typewriter-cursor';
+      let i = 0;
+      
+      function type() {
+        const chunk = text.substring(i, i + 50);
+        i += 50;
+        const node = document.createTextNode(chunk);
+        el.insertBefore(node, cursor);
+        
+        if (i < text.length) {
+          requestAnimationFrame(type);
+        } else {
+          el.removeChild(cursor);
+        }
+      }
+      el.appendChild(cursor);
+      type();
+    }
+
+    // Source reveal logic and Copy handlers
+    ['release', 'testing'].forEach(env => {
+      const btn = document.getElementById(`btn-src-${env}`);
+      const copyBtn = document.getElementById(`btn-copy-${env}`);
+      const box = document.getElementById(`code-${env}`);
+      const loadView = box.querySelector('.load-view');
+      const srcView = box.querySelector('.src-view');
+      
+      let isSource = false;
+      
+      btn.addEventListener('click', () => {
+        isSource = !isSource;
+        if (isSource) {
+          btn.querySelector('span').textContent = 'Hide Source';
+          loadView.style.display = 'none';
+          srcView.style.display = 'block';
+          
+          const srcText = env === 'release' ? state.relSrc : state.tesSrc;
+          if (srcText && !srcView.dataset.typed) {
+            typewriter(srcView, srcText);
+            srcView.dataset.typed = 'true';
+          }
+        } else {
+          btn.querySelector('span').textContent = 'Show Source';
+          srcView.style.display = 'none';
+          loadView.style.display = 'block';
+        }
+      });
+      
+      copyBtn.addEventListener('click', () => {
+        const textToCopy = isSource ? srcView.textContent : loadView.textContent;
+        navigator.clipboard.writeText(textToCopy.trim());
+        toast(isSource ? 'Source code copied.' : 'Execution string copied.');
+      });
+    });
+
+    // Fetch and sync data
+    async function initData() {
+      try {
+        // 1. Fetch versions
+        const vRes = await fetch('https://raw.githubusercontent.com/lowkeymyself/HowToAccountJadeShipClaudeTryHackMe/refs/heads/main/konstantversion.txt?t=' + Date.now());
+        const vText = await vRes.text();
+        const lines = vText.split('\n');
+        
+        let relStatus = 'unknown', tesStatus = 'unknown';
+        lines.forEach(l => {
+          const p = l.split(' ');
+          if (l.startsWith('konstant =') && p.length >= 4) {
+            state.relVer = 'v' + p[2]; relStatus = p[3].trim();
+          }
+          if (l.startsWith('konstant_testing =') && p.length >= 4) {
+            state.tesVer = 'v' + p[2]; tesStatus = p[3].trim();
+          }
+        });
+
+        document.getElementById('dot-release').className = 'dot ' + (relStatus === 'working' ? 'green' : 'red');
+        document.getElementById('dot-testing').className = 'dot ' + (tesStatus === 'working' ? 'green' : 'red');
+        
+        // Update currently active top version
+        const activeTab = document.querySelector('.tab-btn.active').dataset.target;
+        topVer.textContent = activeTab === 'release' ? state.relVer : state.tesVer;
+
+        // 2. Fetch scripts
+        const [rRes, tRes] = await Promise.all([
+          fetch('https://raw.githubusercontent.com/lowkeymyself/HowToAccountJadeShipClaudeTryHackMe/refs/heads/main/ins.lua?t=' + Date.now()),
+          fetch('https://raw.githubusercontent.com/lowkeymyself/HowToAccountJadeShipClaudeTryHackMe/refs/heads/main/tes.lua?t=' + Date.now())
+        ]);
+        
+        state.relSrc = await rRes.text();
+        state.tesSrc = await tRes.text();
+
+        // Check if synced
+        if (state.relSrc === state.tesSrc) {
+          document.getElementById('sync-status').classList.add('show');
+        }
+
+        // 3. Update time
+        const now = new Date();
+        document.getElementById('last-updated').textContent = `Last checked: ${now.getHours()}:${now.getMinutes().toString().padStart(2,'0')}`;
+
+      } catch (err) {
+        console.error("Failed to load data:", err);
+        toast("Network error loading script data.");
+      }
+    }
+
+    initData();
+
+    // logout listener
+    document.querySelector('.sidebar-footer a').addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('k_auth');
+      window.location.href = 'auth.html';
+    });
+  </script>
+  <script src="favicon.js"></script>
+</body>
+</html>

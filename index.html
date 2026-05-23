@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONSTANT</title>
+  <meta name="description" content="Konstant — A curated series of the best scripts for Roblox.">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ---- landing-specific ---- */
+    canvas#dot-matrix { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* hero */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    /* eyebrow */
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.3s forwards;
+    }
+    .eyebrow::before, .eyebrow::after {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--border2);
+    }
+
+    /* KONSTANT wordmark */
+    .wordmark {
+      font-family: var(--font-title);
+      font-weight: 800;
+      font-size: clamp(64px, 12vw, 160px);
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      user-select: none;
+      margin-bottom: 40px;
+      animation: flicker 6s ease infinite, fadeUp 0.8s ease 0.1s both;
+      position: relative;
+    }
+
+    /* slashed O — replace the O in KONSTANT with a styled SVG-ish span */
+    .wordmark .slashed-o {
+      position: relative;
+      display: inline-block;
+    }
+    .wordmark .slashed-o::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0.05em;
+      height: 120%;
+      background: var(--text);
+      transform: translate(-50%, -50%) rotate(-28deg);
+      pointer-events: none;
+    }
+
+    .hero-sub {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      max-width: 420px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.5s forwards;
+      line-height: 1.8;
+    }
+
+    /* scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1s forwards;
+    }
+    .scroll-hint span {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted2);
+    }
+    .scroll-arrow {
+      width: 1px;
+      height: 36px;
+      background: linear-gradient(to bottom, var(--muted2), transparent);
+      animation: scrollBounce 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateY(0); opacity: 0.4; }
+      50% { transform: translateY(6px); opacity: 1; }
+    }
+
+    /* ---- corner decoration ---- */
+    .corner {
+      position: fixed;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      color: var(--muted2);
+      font-family: var(--font-mono);
+      z-index: 10;
+    }
+    .corner.tl { top: 24px; left: 28px; }
+    .corner.tr { top: 24px; right: 28px; }
+    .corner.bl { bottom: 24px; left: 28px; }
+    .corner.br { bottom: 24px; right: 28px; }
+
+    /* ---- grid lines ---- */
+    .grid-lines {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    .grid-lines span {
+      border-left: 1px solid rgba(255,255,255,0.025);
+    }
+    .grid-lines span:last-child { border-right: 1px solid rgba(255,255,255,0.025); }
+
+    /* ---- docs section ---- */
+    .docs-section {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 24px 120px;
+    }
+
+    .docs-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 64px;
+    }
+    .docs-header-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .docs-header-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--muted);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .doc-block {
+      margin-bottom: 64px;
+    }
+
+    .doc-block h2 {
+      font-family: var(--font-title);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .doc-block p {
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height: 1.9;
+      max-width: 620px;
+    }
+
+    .doc-block p + p { margin-top: 14px; }
+
+    .doc-block .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .tag {
+      padding: 4px 12px;
+      border: 1px solid var(--border2);
+      border-radius: var(--r-sm);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    .doc-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 64px 0;
+    }
+
+    /* inline code */
+    code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2px 7px;
+      border-radius: 4px;
+      color: var(--accent2);
+    }
+
+    /* ---- open button section ---- */
+    .open-section {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .open-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .open-section .open-label {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--muted2);
+      text-transform: uppercase;
+    }
+
+    .open-section .btn-open {
+      font-size: 14px;
+      padding: 16px 56px;
+      letter-spacing: 0.15em;
+      border: 1px solid var(--border2);
+      border-radius: var(--r-sm);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      transition: var(--transition);
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-open::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--text);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 0;
+    }
+    .btn-open:hover::before { transform: scaleX(1); }
+    .btn-open:hover { color: var(--bg); }
+    .btn-open span { position: relative; z-index: 1; }
+
+    /* corner brackets on open btn */
+    .btn-open .corner-tl,
+    .btn-open .corner-br {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-color: var(--muted2);
+      border-style: solid;
+    }
+    .btn-open .corner-tl {
+      top: 4px; left: 4px;
+      border-width: 1px 0 0 1px;
+    }
+    .btn-open .corner-br {
+      bottom: 4px; right: 4px;
+      border-width: 0 1px 1px 0;
+    }
+
+    /* ---- count ticker on hero ---- */
+    .ticker-row {
+      display: flex;
+      gap: 32px;
+      margin-top: 48px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.7s forwards;
+    }
+    .ticker-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .ticker-num {
+      font-family: var(--font-title);
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .ticker-label {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--muted2);
+      text-transform: uppercase;
+    }
+    .ticker-sep {
+      width: 1px;
+      background: var(--border);
+      align-self: stretch;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---- glitch effect on hover of wordmark ---- */
+    .wordmark:hover { animation: glitch 0.4s steps(2, end) forwards, flicker 6s ease infinite; }
+    @keyframes glitch {
+      0%   { text-shadow: none; }
+      20%  { text-shadow: 2px 0 0 rgba(255,100,100,0.4), -2px 0 0 rgba(100,200,255,0.4); transform: translate(-1px, 0); }
+      40%  { text-shadow: -1px 0 0 rgba(255,100,100,0.4), 1px 0 0 rgba(100,200,255,0.4); transform: translate(1px, 0); }
+      60%  { text-shadow: 1px 1px 0 rgba(255,100,100,0.4); transform: translate(0, 1px); }
+      80%  { text-shadow: none; transform: translate(0,0); }
+      100% { text-shadow: none; }
+    }
+
+    /* version tag */
+    .version-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border: 1px solid var(--border2);
+      border-radius: 99px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-top: 28px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.9s forwards;
+    }
+    .version-badge .dot { width: 5px; height: 5px; }
+  </style>
+</head>
+<body>
+
+  <div class="scanline"></div>
+  <canvas id="dot-matrix"></canvas>
+
+  <div class="grid-lines">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- corners -->
+  <div class="corner tl">K N S T</div>
+  <div class="corner tr" id="corner-time"></div>
+  <div class="corner bl">v2 — 2026</div>
+  <div class="corner br">RBLX / LSE</div>
+
+  <!-- toast -->
+  <div id="toast"></div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="eyebrow">Roblox Script Suite</div>
+
+    <h1 class="wordmark" aria-label="KONSTANT">K<span class="slashed-o">O</span>NSTANT</h1>
+
+    <p class="hero-sub">
+      A curated series of the best scripts for Roblox.<br>
+      Featuring our flagship Supermoto toolkit.
+    </p>
+
+    <div class="ticker-row">
+      <div class="ticker-item">
+        <span class="ticker-num" data-count="8">0</span>
+        <span class="ticker-label">Sessions</span>
+      </div>
+      <div class="ticker-sep"></div>
+      <div class="ticker-item">
+        <span class="ticker-num" data-count="42">0</span>
+        <span class="ticker-label">Features</span>
+      </div>
+      <div class="ticker-sep"></div>
+      <div class="ticker-item">
+        <span class="ticker-num" data-count="5599">0</span>
+        <span class="ticker-label">Lines</span>
+      </div>
+    </div>
+
+    <div class="version-badge">
+      <span class="dot green"></span>
+      <span id="badge-ver">loading...</span>
+    </div>
+
+    <div class="scroll-hint">
+      <span>scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- DOCS SECTION -->
+  <section class="docs-section">
+
+    <div class="docs-header">
+      <div class="docs-header-line"></div>
+      <span class="docs-header-label">Documentation</span>
+      <div class="docs-header-line"></div>
+    </div>
+
+    <div class="doc-block fade-in">
+      <h2>What is Konstant</h2>
+      <p>Konstant is an ongoing series of high-quality, client-side Lua scripts for Roblox. We focus on building the best, most polished execution suites with minimal interfaces and absolute precision.</p>
+      <p>Our current flagship release is built exclusively for Roblox supermoto and ebike games. What started as a small physics experiment has grown into a massive toolkit covering everything from advanced bike physics and custom tuning, to map loading, ESP, and economy exploits.</p>
+      <div class="tag-row">
+        <span class="tag">Lua 5.1</span>
+        <span class="tag">Roblox</span>
+        <span class="tag">LinoriaLib</span>
+        <span class="tag">Client-side</span>
+      </div>
+    </div>
+
+    <div class="doc-divider fade-in"></div>
+
+    <div class="doc-block fade-in">
+      <h2>Getting started</h2>
+      <p>You need a script executor that supports <code>hookmetamethod</code>, <code>writefile</code>, and <code>fireproximityprompt</code>. Most modern executors work fine.</p>
+      <p>Copy the loadstring below after logging in. Paste it into your executor while in the game. The menu shows up automatically. If you already ran it before, toggle it or use the deduplication guard at the top, it cleans itself up on reload.</p>
+    </div>
+
+    <div class="doc-divider fade-in"></div>
+
+    <div class="doc-block fade-in">
+      <h2>Tabs overview</h2>
+      <p>The main menu has five tabs. Money handles the economy exploits. Bikes gives you speed, brake, turn patches plus a bunch of physics mods. Mods is where the fun stuff lives: fly mode, anti-fall, rainbow, trail, wheelie and stoppie controls, drift stuff. Troll handles fling logic. ESP gives you overlays on other players and bikes.</p>
+      <p>Settings saves your config to disk through LinoriaLib, so your toggles carry over between sessions.</p>
+      <div class="tag-row">
+        <span class="tag">Main</span>
+        <span class="tag">Bikes</span>
+        <span class="tag">Mods</span>
+        <span class="tag">Troll</span>
+        <span class="tag">ESP</span>
+        <span class="tag">Maps</span>
+        <span class="tag">Settings</span>
+      </div>
+    </div>
+
+    <div class="doc-divider fade-in"></div>
+
+    <div class="doc-block fade-in">
+      <h2>Bike patching</h2>
+      <p>Get on your bike first, then hit Patch. Speed and acceleration are in mph, brake force is in mph/s, turn speed in degrees per second. They all work independently. Unpatching any of them disconnects the heartbeat loop for that specific one.</p>
+      <p>Auto-fix Bike handles the back wheel clipping issue. When the game tweens the wheel to your click position on mount, it catches it, locks the wheel back to its pre-mount offset relative to the seat, and cycles gear state until it reads neutral.</p>
+    </div>
+
+    <div class="doc-divider fade-in"></div>
+
+    <div class="doc-block fade-in">
+      <h2>Configs</h2>
+      <p>Bike customization configs are saved to <code>Konstant/bike_appearance_configs.json</code> in your executor's workspace folder. They survive reloads. If the file gets corrupted it gets wiped clean on next load so it doesn't stay broken.</p>
+      <p>The LinoriaLib config for your toggle states autosaves and loads with a small delay on startup so it doesn't interfere with game initialization.</p>
+    </div>
+
+    <div class="doc-divider fade-in"></div>
+
+    <div class="doc-block fade-in">
+      <h2>Notes on testing builds</h2>
+      <p>Testing builds pull from a separate branch and may have partially finished features or logic that changes between sessions. They work, but they're not stable. If something breaks in testing, that's expected.</p>
+    </div>
+
+  </section>
+
+  <!-- OPEN BUTTON (appears after scroll) -->
+  <section class="open-section" id="open-section">
+    <span class="open-label">Ready</span>
+    <a href="auth.html" target="_blank" class="btn-open" id="open-btn">
+      <div class="corner-tl"></div>
+      <div class="corner-br"></div>
+      <span>Open</span>
+    </a>
+    <span class="open-label" style="font-size:9px; margin-top:4px; letter-spacing:0.1em;">Requires access key</span>
+  </section>
+
+  <script>
+    // ---- dot matrix background ----
+    const canvas = document.getElementById('dot-matrix');
+    const ctx = canvas.getContext('2d');
+    let W, H, cols, rows;
+    const DOT_SPACING = 28;
+    const dots = [];
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      cols = Math.ceil(W / DOT_SPACING) + 1;
+      rows = Math.ceil(H / DOT_SPACING) + 1;
+      dots.length = 0;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          dots.push({ x: c * DOT_SPACING, y: r * DOT_SPACING, a: Math.random() });
+        }
+      }
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    let mouseX = -9999, mouseY = -9999;
+    window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+    let raf;
+    function drawDots(ts) {
+      ctx.clearRect(0, 0, W, H);
+      for (const d of dots) {
+        const dx = d.x - mouseX, dy = d.y - mouseY;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const proximity = Math.max(0, 1 - dist / 200);
+        const t = ts * 0.001;
+        const pulse = 0.5 + 0.5 * Math.sin(t + d.x * 0.04 + d.y * 0.04);
+        const alpha = Math.min(1, d.a * 0.3 + proximity * 0.7 + pulse * 0.08);
+        const size  = 1 + proximity * 2.5;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, size * 0.6, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+        ctx.fill();
+      }
+      raf = requestAnimationFrame(drawDots);
+    }
+    drawDots(0);
+
+    // ---- corner clock ----
+    function tick() {
+      const n = new Date();
+      document.getElementById('corner-time').textContent =
+        n.getHours().toString().padStart(2,'0') + ':' +
+        n.getMinutes().toString().padStart(2,'0') + ':' +
+        n.getSeconds().toString().padStart(2,'0');
+    }
+    tick(); setInterval(tick, 1000);
+
+    // ---- scroll-triggered open section ----
+    const openSection = document.getElementById('open-section');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.2 });
+    obs.observe(openSection);
+
+    // ---- fade-in on scroll ----
+    const faders = document.querySelectorAll('.fade-in');
+    const fObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); fObs.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    faders.forEach(el => fObs.observe(el));
+
+    // ---- counter animation ----
+    function animateCount(el, target, duration = 1400) {
+      const start = performance.now();
+      function step(ts) {
+        const p = Math.min((ts - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.floor(ease * target).toLocaleString();
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    const tickObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('[data-count]').forEach(el => {
+            animateCount(el, parseInt(el.dataset.count));
+          });
+          tickObs.disconnect();
+        }
+      });
+    });
+    tickObs.observe(document.querySelector('.ticker-row'));
+
+    // ---- version badge ----
+    fetch('https://raw.githubusercontent.com/lowkeymyself/HowToAccountJadeShipClaudeTryHackMe/refs/heads/main/konstantversion.txt')
+      .then(r => r.text())
+      .then(t => {
+        const lines = t.split('\n');
+        let status = 'unknown';
+        for (let line of lines) {
+          if (line.startsWith('konstant =')) {
+            const parts = line.split(' ');
+            if (parts.length >= 4) {
+              status = parts[3].trim();
+              document.getElementById('badge-ver').textContent = 'Live v' + parts[2];
+              break;
+            }
+          }
+        }
+        if (status === 'unknown') {
+            document.getElementById('badge-ver').textContent = 'Unknown';
+        } else if (status !== 'working') {
+            document.getElementById('badge-ver').textContent = 'Offline';
+        }
+        const dot = document.querySelector('.version-badge .dot');
+        dot.className = 'dot ' + (status === 'working' ? 'green' : 'red');
+      })
+      .catch(() => { document.getElementById('badge-ver').textContent = 'unknown'; });
+
+    // ---- if already authed, modify open button ----
+    if (localStorage.getItem('k_auth') === '1') {
+      const btn = document.getElementById('open-btn');
+      btn.href = 'dashboard.html';
+      btn.querySelector('span').textContent = 'Dashboard';
+    }
+  </script>
+  <script src="favicon.js"></script>
+</body>
+</html>
