@@ -76,6 +76,15 @@
 
     .tab-btn .left { display: flex; align-items: center; gap: 10px; }
 
+    .nav-section-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      padding: 4px 16px 6px;
+    }
+
     .sidebar-footer {
       padding: 24px;
       border-top: 1px solid var(--border);
@@ -268,10 +277,342 @@
     }
     #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
+    /* ---- Entrance: sidebar ---- */
+    @keyframes slideInLeft {
+      from { transform: translateX(-100%); opacity: 0; }
+      to   { transform: translateX(0);    opacity: 1; }
+    }
+    .sidebar {
+      animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* ---- Entrance: top-bar ---- */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .top-bar {
+      animation: fadeDown 0.5s 0.3s both;
+    }
+
+    /* ---- Brand glitch ---- */
+    @keyframes glitch {
+      0%, 90%, 100% { transform: none; text-shadow: none; }
+      91%  { transform: skewX(-8deg); text-shadow: -2px 0 #5b9cf6, 2px 0 #ef4444; }
+      93%  { transform: skewX(4deg);  text-shadow:  2px 0 #5b9cf6,-1px 0 #ef4444; }
+      95%  { transform: skewX(-2deg); text-shadow: none; }
+      97%  { transform: none;         text-shadow: -1px 0 #5b9cf6; }
+    }
+    .brand {
+      animation: glitch 7s ease-in-out infinite;
+    }
+
+    /* ---- Version-tag blink ---- */
+    @keyframes blinkBorder {
+      0%, 100% { border-color: var(--border2); color: var(--muted); }
+      50%       { border-color: var(--border);  color: var(--muted2); }
+    }
+    .version-tag {
+      animation: blinkBorder 3s ease-in-out infinite;
+    }
+
+    /* ---- Stat cards ---- */
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes traceEdge {
+      0%   { transform: translateX(-200%); }
+      100% { transform: translateX(300%); }
+    }
+
+    .stats-section {
+      margin-bottom: 32px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    }
+    .stat-card.visible {
+      animation: cardIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .stat-card:hover {
+      border-color: var(--border2);
+      box-shadow: 0 0 24px rgba(255,255,255,0.04);
+      transform: translateY(-2px);
+    }
+
+    /* border trace sweep */
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+      transform: translateX(-200%);
+    }
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+    .stat-card.visible::before {
+      animation: traceEdge 1.2s ease-out forwards;
+    }
+    .stat-card.visible:nth-child(1)::before { animation-delay: 0.15s; }
+    .stat-card.visible:nth-child(2)::before { animation-delay: 0.30s; }
+    .stat-card.visible:nth-child(3)::before { animation-delay: 0.45s; }
+    .stat-card.visible:nth-child(4)::before { animation-delay: 0.60s; }
+
+    .stat-label {
+      font-size: 10px;
+      color: var(--muted2);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 10px;
+    }
+    .stat-value {
+      font-family: var(--font-title);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--text);
+      line-height: 1;
+    }
+    .stat-value.green {
+      color: var(--green);
+      text-shadow: 0 0 20px rgba(34,197,94,0.25);
+    }
+    .stat-value.red {
+      color: var(--red);
+      text-shadow: 0 0 20px rgba(239,68,68,0.25);
+    }
+    .stat-sub {
+      font-size: 10px;
+      color: var(--muted2);
+      margin-top: 6px;
+    }
+
+    /* ---- Feature grid ---- */
+    @keyframes pulseNew {
+      0%, 100% { box-shadow: 0 0 3px var(--green); }
+      50%       { box-shadow: 0 0 8px var(--green), 0 0 14px rgba(34,197,94,0.35); }
+    }
+    @keyframes tagGlow {
+      0%, 100% { border-color: rgba(34,197,94,0.2);  box-shadow: none; }
+      50%       { border-color: rgba(34,197,94,0.5);  box-shadow: 0 0 6px rgba(34,197,94,0.15); }
+    }
+
+    .feat-section {
+      margin-top: 8px;
+    }
+    .feat-section-hdr {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--muted2);
+      margin-bottom: 14px;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .feat-group {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 16px;
+      opacity: 0;
+      transition: border-color 0.3s;
+    }
+    .feat-group:hover { border-color: var(--border2); }
+    .feat-group:nth-child(1) { animation: cardIn 0.4s 0.75s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .feat-group:nth-child(2) { animation: cardIn 0.4s 0.90s cubic-bezier(0.16,1,0.3,1) forwards; }
+    .feat-group:nth-child(3) { animation: cardIn 0.4s 1.05s cubic-bezier(0.16,1,0.3,1) forwards; }
+
+    .feat-group-title {
+      font-family: var(--font-title);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .feat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      color: var(--muted);
+      font-size: 11px;
+      cursor: default;
+      transition: color 0.2s;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .feat-item:hover { color: var(--text); }
+    .feat-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--border2);
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .feat-item:hover .feat-dot { background: var(--text); }
+    .feat-dot.new {
+      background: var(--green);
+      animation: pulseNew 2s ease-in-out infinite;
+    }
+    .feat-tag {
+      margin-left: auto;
+      font-size: 9px;
+      color: var(--green);
+      border: 1px solid rgba(34,197,94,0.25);
+      padding: 1px 6px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      animation: tagGlow 2.5s ease-in-out infinite;
+    }
+    .feat-item code {
+      font-family: var(--font-mono, monospace);
+      font-size: 12px;
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+      padding: 1px 6px;
+      border-radius: 3px;
+      border: 1px solid var(--border, #1c1c1c);
+    }
+    .feat-footnote {
+      margin-top: 18px;
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 760px;
+    }
+
+    /* ---- testing-tab stale-version notice ---- */
+    .testing-stale-note {
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.4);
+      border-left-width: 3px;
+      border-radius: 3px;
+      font-family: var(--font-mono, monospace);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--warn, #f59e0b);
+      font-weight: 600;
+    }
+    .testing-stale-note::before {
+      content: '⚠';
+      margin-right: 10px;
+      font-size: 14px;
+    }
+
+    /* ---- Final layout tweaks ---- */
+    .content-pad {
+      padding-bottom: 64px;
+    }
+
+    /* ============================================================
+       UPGRADE BANNER — universal-script announcement
+       ============================================================ */
+    .kn-banner {
+      position: relative;
+      width: 100%;
+      z-index: 50;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, var(--bg-sub, #0c0c0c), var(--bg, #050505));
+      border: 1px solid var(--border, #1c1c1c);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .kn-banner-inner { padding: 0 20px; }
+    .kn-banner-strip { display: flex; align-items: center; gap: 14px; padding: 12px 0; }
+    .kn-banner-pulse {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green, #4caf50);
+      animation: knBannerPulse 1.8s ease-out infinite;
+      flex: 0 0 auto;
+    }
+    @keyframes knBannerPulse {
+      0%   { box-shadow: 0 0 0 0    rgba(76,175,80, 0.45); }
+      100% { box-shadow: 0 0 0 12px rgba(76,175,80, 0); }
+    }
+    .kn-banner-text {
+      flex: 1 1 auto; display: flex; align-items: baseline; gap: 12px;
+      color: var(--text, #e6e6e6); font-size: 13px; min-width: 0;
+    }
+    .kn-banner-eyebrow {
+      font-family: var(--font-mono, monospace); font-size: 10px;
+      color: var(--green, #4caf50); letter-spacing: 0.3em;
+      padding: 3px 8px; border: 1px solid var(--green, #4caf50);
+      border-radius: 2px; flex: 0 0 auto;
+    }
+    .kn-banner-msg { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .kn-banner-soon { color: var(--muted, #888); font-style: italic; flex: 0 0 auto; }
+    .kn-banner-learn {
+      flex: 0 0 auto; background: transparent; color: var(--text, #e6e6e6);
+      border: 1px solid var(--border2, #2a2a2a); padding: 6px 14px;
+      font-family: var(--font-mono, monospace); font-size: 10px;
+      letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
+      border-radius: 2px; transition: all 0.18s ease;
+    }
+    .kn-banner-learn:hover {
+      border-color: var(--green, #4caf50); color: var(--green, #4caf50);
+      letter-spacing: 0.22em;
+    }
+    .kn-banner-detail {
+      max-height: 0; opacity: 0; overflow: hidden;
+      transition: max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease 0.05s;
+    }
+    .kn-banner.open .kn-banner-detail { max-height: 560px; opacity: 1; }
+    .kn-banner-detail-inner {
+      padding: 6px 0 24px; max-width: 760px;
+      border-top: 1px solid var(--border, #1c1c1c); margin-top: 4px;
+    }
+    .kn-banner-detail-inner h3 {
+      margin: 18px 0 10px;
+      font-family: var(--font-mono, monospace); font-size: 11px;
+      color: var(--green, #4caf50); letter-spacing: 0.25em; text-transform: uppercase;
+    }
+    .kn-banner-detail-inner p {
+      font-size: 13px; line-height: 1.65;
+      color: var(--muted, #aaa); margin: 0 0 12px;
+    }
+    .kn-banner-detail-inner p strong { color: var(--text, #e6e6e6); font-weight: 600; }
+    .kn-banner-close {
+      margin-top: 10px; background: transparent;
+      color: var(--muted, #888); border: 1px solid var(--border2, #2a2a2a);
+      padding: 6px 14px; font-family: var(--font-mono, monospace);
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      cursor: pointer; border-radius: 2px; transition: all 0.15s ease;
+    }
+    .kn-banner-close:hover { color: var(--text); border-color: var(--text); }
+
   </style>
 </head>
 <body>
 
+  <div class="scanline"></div>
   <canvas id="dot-matrix"></canvas>
   <div id="toast"></div>
 
@@ -280,6 +621,8 @@
     <div class="brand">K<span class="so">O</span>NSTANT</div>
     
     <div class="nav-tabs">
+      <div class="nav-section-label">Universal Bike Script</div>
+
       <button class="tab-btn active" data-target="release">
         <div class="left">
           <span class="dot" id="dot-release"></span>
@@ -293,6 +636,7 @@
           <span>Konstant Testing</span>
         </div>
       </button>
+
     </div>
 
     <div class="sidebar-footer">
@@ -304,7 +648,31 @@
 
   <!-- MAIN -->
   <main class="main-content">
-    
+
+    <!-- UPGRADE BANNER -->
+    <div class="kn-banner" id="kn-banner">
+      <div class="kn-banner-inner">
+        <div class="kn-banner-strip">
+          <span class="kn-banner-pulse" aria-hidden="true"></span>
+          <div class="kn-banner-text">
+            <span class="kn-banner-eyebrow">UPGRADING</span>
+            <span class="kn-banner-msg">Konstant is becoming a universal movement script.</span>
+            <span class="kn-banner-soon">Coming soon.</span>
+          </div>
+          <button class="kn-banner-learn" id="kn-banner-learn" type="button">Learn more</button>
+        </div>
+        <div class="kn-banner-detail" id="kn-banner-detail">
+          <div class="kn-banner-detail-inner">
+            <h3>Where this is going</h3>
+            <p>Konstant started as a focused toolkit for one game — Roblox Supermoto. Through testing, the underlying physics, mod logic, and customization layer turned out to work across nearly every bike, e-bike, and scooter game on Roblox. So instead of staying narrow, we're widening the scope.</p>
+            <p>The next version detects the place ID at startup. In the original Supermoto place, it loads the full suite — economy exploits, the curated bike spawner, custom map tools. In any other game, it strips back to the universal core: physics tuning, ESP, anti-fall, optimizer, customization, and a generic spawner that hunts for bike folders and spawn remotes automatically. New brand name in that mode: <strong>Konstant Aero</strong>.</p>
+            <p>This is a structural change, not a rewrite. Everything you already use stays in the Supermoto build. The site, the script, and the docs are all moving together.</p>
+            <button class="kn-banner-close" id="kn-banner-close" type="button">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="top-bar">
       <div class="page-title" id="page-title">Release Branch</div>
       <div class="page-meta">
@@ -313,7 +681,33 @@
     </div>
 
     <div class="content-pad">
-      
+
+      <!-- STAT CARDS -->
+      <div class="stats-section">
+        <div class="stats-row">
+          <div class="stat-card visible">
+            <div class="stat-label">Version</div>
+            <div class="stat-value" id="stat-version">v---</div>
+            <div class="stat-sub" id="stat-branch">release</div>
+          </div>
+          <div class="stat-card visible">
+            <div class="stat-label">Status</div>
+            <div class="stat-value" id="stat-status" style="font-size:15px;letter-spacing:0.05em;">---</div>
+            <div class="stat-sub" id="stat-status-sub">checking...</div>
+          </div>
+          <div class="stat-card visible">
+            <div class="stat-label">Features</div>
+            <div class="stat-value" id="stat-feats">0</div>
+            <div class="stat-sub">across 5 tabs</div>
+          </div>
+          <div class="stat-card visible">
+            <div class="stat-label">Updated</div>
+            <div class="stat-value" style="font-size:15px;">Today</div>
+            <div class="stat-sub">23 May 2026</div>
+          </div>
+        </div>
+      </div>
+
       <!-- RELEASE PANEL -->
       <div class="tab-panel active" id="panel-release">
         <div class="box-title">Execution String</div>
@@ -336,6 +730,7 @@
 
       <!-- TESTING PANEL -->
       <div class="tab-panel" id="panel-testing">
+        <div class="testing-stale-note">Testing might be an older version than Release</div>
         <div class="warning-banner show">
           WARNING: Testing build. Features are incomplete, bugs are expected, and the script may update live while playing.
         </div>
@@ -356,6 +751,35 @@
             <button class="btn btn-primary" id="btn-copy-testing"><span>Copy</span></button>
           </div>
         </div>
+      </div>
+
+      <!-- EXECUTOR REQUIREMENTS — what your executor must support to run Konstant -->
+      <div class="feat-section">
+        <div class="feat-section-hdr">Executor Requirements</div>
+        <div class="feature-grid">
+
+          <div class="feat-group">
+            <div class="feat-group-title">Network</div>
+            <div class="feat-item"><span class="feat-dot"></span> <code>loadstring</code></div>
+            <div class="feat-item"><span class="feat-dot"></span> <code>game:HttpGet</code></div>
+          </div>
+
+          <div class="feat-group">
+            <div class="feat-group-title">File I/O</div>
+            <div class="feat-item"><span class="feat-dot"></span> <code>writefile</code></div>
+            <div class="feat-item"><span class="feat-dot"></span> <code>readfile</code></div>
+            <div class="feat-item"><span class="feat-dot"></span> <code>isfolder</code></div>
+            <div class="feat-item"><span class="feat-dot"></span> <code>makefolder</code></div>
+          </div>
+
+          <div class="feat-group">
+            <div class="feat-group-title">Game</div>
+            <div class="feat-item"><span class="feat-dot"></span> <code>fireproximityprompt</code></div>
+            <div class="feat-item"><span class="feat-dot"></span> <code>task.spawn</code> / <code>task.wait</code></div>
+          </div>
+
+        </div>
+        <div class="feat-footnote">All major executors (Solara, Wave, Synapse, Krnl, Fluxus, etc.) support this set. If a function is missing on your executor, the dependent feature silently no-ops rather than crashing the script.</div>
       </div>
 
     </div>
@@ -406,12 +830,53 @@
       setTimeout(() => t.classList.remove('show'), 2800);
     }
 
+    let _versionIv = null;
+    let _featsIv = null;
+
+    // Stat card helpers
+    function countUpVersion(targetStr) {
+      clearInterval(_versionIv);
+      const raw = parseFloat(targetStr.replace('v', '')) || 0;
+      const target = Math.round(raw * 10);
+      const el = document.getElementById('stat-version');
+      let v = 0;
+      _versionIv = setInterval(() => {
+        v++;
+        el.textContent = 'v' + Math.floor(v / 10) + '.' + (v % 10);
+        if (v >= target) { clearInterval(_versionIv); el.textContent = targetStr; }
+      }, 40);
+    }
+
+    function countUpFeats(target) {
+      clearInterval(_featsIv);
+      const el = document.getElementById('stat-feats');
+      let f = 0;
+      _featsIv = setInterval(() => {
+        f += 2;
+        if (f > target) f = target;
+        el.textContent = f;
+        if (f >= target) clearInterval(_featsIv);
+      }, 30);
+    }
+
+    function setStatCards(ver, statusStr) {
+      const statusEl = document.getElementById('stat-status');
+      const subEl    = document.getElementById('stat-status-sub');
+      const isWorking = statusStr === 'working';
+      statusEl.textContent = isWorking ? 'WORKING' : 'BROKEN';
+      statusEl.className   = 'stat-value ' + (isWorking ? 'green' : 'red');
+      subEl.textContent    = isWorking ? 'all systems go' : 'check back later';
+      countUpVersion(ver);
+    }
+
     // State
     const state = {
       relSrc: null,
       tesSrc: null,
       relVer: 'v---',
-      tesVer: 'v---'
+      tesVer: 'v---',
+      relStatus: 'unknown',
+      tesStatus: 'unknown'
     };
 
     // UI elements
@@ -430,7 +895,14 @@
         document.getElementById(`panel-${target}`).classList.add('active');
         
         pageTitle.textContent = target === 'release' ? 'Release Branch' : 'Testing Branch';
-        topVer.textContent = target === 'release' ? state.relVer : state.tesVer;
+          topVer.textContent    = target === 'release' ? state.relVer    : state.tesVer;
+          if (state.relVer !== 'v---') {
+            document.getElementById('stat-branch').textContent = target;
+            setStatCards(
+              target === 'release' ? state.relVer    : state.tesVer,
+              target === 'release' ? state.relStatus : state.tesStatus
+            );
+          }
       });
     });
 
@@ -514,10 +986,22 @@
 
         document.getElementById('dot-release').className = 'dot ' + (relStatus === 'working' ? 'green' : 'red');
         document.getElementById('dot-testing').className = 'dot ' + (tesStatus === 'working' ? 'green' : 'red');
-        
+
         // Update currently active top version
         const activeTab = document.querySelector('.tab-btn.active').dataset.target;
         topVer.textContent = activeTab === 'release' ? state.relVer : state.tesVer;
+
+        // Store statuses for tab switches
+        state.relStatus = relStatus;
+        state.tesStatus = tesStatus;
+
+        // Populate stat cards
+        const activeEnv = document.querySelector('.tab-btn.active').dataset.target;
+        setStatCards(
+          activeEnv === 'release' ? state.relVer : state.tesVer,
+          activeEnv === 'release' ? relStatus    : tesStatus
+        );
+        countUpFeats(34);
 
         // 2. Fetch scripts
         const [rRes, tRes] = await Promise.all([
@@ -551,6 +1035,16 @@
       localStorage.removeItem('k_auth');
       window.location.href = 'auth.html';
     });
+
+    // upgrade banner expand/collapse
+    (function() {
+      var banner = document.getElementById('kn-banner');
+      var learn  = document.getElementById('kn-banner-learn');
+      var close  = document.getElementById('kn-banner-close');
+      if (!banner || !learn) return;
+      learn.addEventListener('click', function() { banner.classList.toggle('open'); });
+      if (close) close.addEventListener('click', function() { banner.classList.remove('open'); });
+    })();
   </script>
   <script src="favicon.js"></script>
 </body>

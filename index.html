@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KONSTANT</title>
-  <meta name="description" content="Konstant — A curated series of the best scripts for Roblox.">
+  <meta name="description" content="Konstant — Precision tools for Roblox. Universal bike script.">
   <link rel="stylesheet" href="style.css">
   <style>
     /* ---- landing-specific ---- */
@@ -54,7 +54,7 @@
       color: var(--text);
       user-select: none;
       margin-bottom: 40px;
-      animation: flicker 6s ease infinite, fadeUp 0.8s ease 0.1s both;
+      animation: flicker 6s ease infinite;
       position: relative;
     }
 
@@ -216,6 +216,27 @@
       margin: 64px 0;
     }
 
+    /* project section label inside docs */
+    .doc-project-label {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 72px 0 48px;
+    }
+    .doc-project-label-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .doc-project-label-text {
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+    }
+
     /* inline code */
     code {
       font-family: var(--font-mono);
@@ -367,6 +388,187 @@
       animation: fadeUp 0.8s ease 0.9s forwards;
     }
     .version-badge .dot { width: 5px; height: 5px; }
+
+    /* ---- BG decorative wordmark ---- */
+    .hero-bg-text {
+      position: absolute; top: 50%; left: 50%;
+      font-family: var(--font-title); font-weight: 800;
+      font-size: clamp(80px, 18vw, 260px);
+      color: var(--text); opacity: 0.025;
+      letter-spacing: -0.05em; user-select: none; pointer-events: none;
+      white-space: nowrap;
+      transform: translate(-50%, -50%) translate(calc(var(--px, 0) * -30px), calc(var(--py, 0) * -12px));
+      transition: transform 0.12s ease-out;
+    }
+
+    /* ---- Radial glow ---- */
+    .hero-glow {
+      position: absolute; top: 50%; left: 50%;
+      width: 600px; height: 300px;
+      transform: translate(-50%, -60%);
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.035) 0%, transparent 70%);
+      pointer-events: none;
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.6; transform: translate(-50%, -60%) scale(1); }
+      50%       { opacity: 1;   transform: translate(-50%, -60%) scale(1.12); }
+    }
+
+    /* ---- Hero inner parallax wrapper ---- */
+    .hero-inner {
+      display: flex; flex-direction: column; align-items: center;
+      position: relative; z-index: 2;
+      transform: translate(calc(var(--px, 0) * 8px), calc(var(--py, 0) * 4px));
+      transition: transform 0.08s ease-out;
+    }
+
+    /* ---- Wordmark 3-D tilt on mouse ---- */
+    .wordmark {
+      transform: perspective(900px) rotateX(calc(var(--py, 0) * -3deg)) rotateY(calc(var(--px, 0) * 4deg)) !important;
+      transition: transform 0.1s ease-out !important;
+    }
+
+    /* ---- Ticker box ---- */
+    .ticker-row {
+      border: 1px solid var(--border) !important;
+      border-radius: var(--r-sm) !important;
+      gap: 0 !important;
+      overflow: hidden;
+    }
+    .ticker-item {
+      padding: 20px 32px;
+    }
+    .ticker-item + .ticker-item {
+      border-left: 1px solid var(--border);
+    }
+    .ticker-num {
+      font-size: 30px !important;
+    }
+
+    /* ---- Marquee band ---- */
+    .marquee-band {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0; overflow: hidden;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .marquee-band::before, .marquee-band::after {
+      content: ''; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 2; pointer-events: none;
+    }
+    .marquee-band::before { left: 0;  background: linear-gradient(to right, var(--bg), transparent); }
+    .marquee-band::after  { right: 0; background: linear-gradient(to left,  var(--bg), transparent); }
+
+    .marquee-row { display: flex; overflow: hidden; }
+    .marquee-track {
+      display: flex; gap: 0; white-space: nowrap;
+      animation: mScroll 32s linear infinite;
+      will-change: transform;
+    }
+    .marquee-track.rev {
+      animation-direction: reverse;
+      animation-duration: 38s;
+    }
+    @keyframes mScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .marquee-item {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 0 20px; font-size: 10px;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--muted2); white-space: nowrap;
+    }
+    .marquee-sep { color: var(--border2); font-size: 8px; }
+    .marquee-item.hi { color: var(--green); }
+
+    /* ---- typewriter cursor ---- */
+    .tw-cursor {
+      display: inline-block; width: 1px; height: 12px;
+      background: var(--muted); margin-left: 2px;
+      vertical-align: middle;
+      animation: twBlink 1s step-end infinite;
+    }
+    @keyframes twBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* ============================================================
+       UPGRADE BANNER — universal-script announcement
+       ============================================================ */
+    .kn-banner {
+      position: relative;
+      width: 100%;
+      z-index: 50;
+      background: linear-gradient(180deg, var(--bg-sub, #0c0c0c), var(--bg, #050505));
+      border-bottom: 1px solid var(--border, #1c1c1c);
+      overflow: hidden;
+    }
+    .kn-banner-inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+    .kn-banner-strip { display: flex; align-items: center; gap: 16px; padding: 14px 0; }
+    .kn-banner-pulse {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green, #4caf50);
+      animation: knBannerPulse 1.8s ease-out infinite;
+      flex: 0 0 auto;
+    }
+    @keyframes knBannerPulse {
+      0%   { box-shadow: 0 0 0 0    rgba(76,175,80, 0.45); }
+      100% { box-shadow: 0 0 0 12px rgba(76,175,80, 0); }
+    }
+    .kn-banner-text {
+      flex: 1 1 auto; display: flex; align-items: baseline; gap: 12px;
+      color: var(--text, #e6e6e6); font-size: 14px; min-width: 0;
+    }
+    .kn-banner-eyebrow {
+      font-family: var(--font-mono, monospace); font-size: 10px;
+      color: var(--green, #4caf50); letter-spacing: 0.3em;
+      padding: 3px 8px; border: 1px solid var(--green, #4caf50);
+      border-radius: 2px; flex: 0 0 auto;
+    }
+    .kn-banner-msg { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .kn-banner-soon { color: var(--muted, #888); font-style: italic; flex: 0 0 auto; }
+    .kn-banner-learn {
+      flex: 0 0 auto; background: transparent; color: var(--text, #e6e6e6);
+      border: 1px solid var(--border2, #2a2a2a); padding: 7px 16px;
+      font-family: var(--font-mono, monospace); font-size: 11px;
+      letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
+      border-radius: 2px; transition: all 0.18s ease;
+    }
+    .kn-banner-learn:hover {
+      border-color: var(--green, #4caf50); color: var(--green, #4caf50);
+      letter-spacing: 0.22em;
+    }
+    .kn-banner-detail {
+      max-height: 0; opacity: 0; overflow: hidden;
+      transition: max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease 0.05s;
+    }
+    .kn-banner.open .kn-banner-detail { max-height: 560px; opacity: 1; }
+    .kn-banner-detail-inner {
+      padding: 8px 0 28px; max-width: 760px;
+      border-top: 1px solid var(--border, #1c1c1c); margin-top: 4px;
+    }
+    .kn-banner-detail-inner h3 {
+      margin: 22px 0 12px;
+      font-family: var(--font-mono, monospace); font-size: 11px;
+      color: var(--green, #4caf50); letter-spacing: 0.25em; text-transform: uppercase;
+    }
+    .kn-banner-detail-inner p {
+      font-size: 13px; line-height: 1.65;
+      color: var(--muted, #aaa); margin: 0 0 14px;
+    }
+    .kn-banner-detail-inner p strong { color: var(--text, #e6e6e6); font-weight: 600; }
+    .kn-banner-close {
+      margin-top: 12px; background: transparent;
+      color: var(--muted, #888); border: 1px solid var(--border2, #2a2a2a);
+      padding: 6px 14px; font-family: var(--font-mono, monospace);
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      cursor: pointer; border-radius: 2px; transition: all 0.15s ease;
+    }
+    .kn-banner-close:hover { color: var(--text); border-color: var(--text); }
+    @media (max-width: 720px) {
+      .kn-banner-strip { flex-wrap: wrap; }
+      .kn-banner-msg { white-space: normal; }
+    }
   </style>
 </head>
 <body>
@@ -381,43 +583,73 @@
   <!-- corners -->
   <div class="corner tl">K N S T</div>
   <div class="corner tr" id="corner-time"></div>
-  <div class="corner bl">v2 — 2026</div>
-  <div class="corner br">RBLX / LSE</div>
+  <div class="corner bl">2026</div>
+  <div class="corner br">RBLX</div>
 
   <!-- toast -->
   <div id="toast"></div>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="eyebrow">Roblox Script Suite</div>
-
-    <h1 class="wordmark" aria-label="KONSTANT">K<span class="slashed-o">O</span>NSTANT</h1>
-
-    <p class="hero-sub">
-      A curated series of the best scripts for Roblox.<br>
-      Featuring our flagship Supermoto toolkit.
-    </p>
-
-    <div class="ticker-row">
-      <div class="ticker-item">
-        <span class="ticker-num" data-count="8">0</span>
-        <span class="ticker-label">Sessions</span>
+  <!-- UPGRADE BANNER -->
+  <div class="kn-banner" id="kn-banner">
+    <div class="kn-banner-inner">
+      <div class="kn-banner-strip">
+        <span class="kn-banner-pulse" aria-hidden="true"></span>
+        <div class="kn-banner-text">
+          <span class="kn-banner-eyebrow">UPGRADING</span>
+          <span class="kn-banner-msg">Konstant is becoming a universal movement script.</span>
+          <span class="kn-banner-soon">Coming soon.</span>
+        </div>
+        <button class="kn-banner-learn" id="kn-banner-learn" type="button">Learn more</button>
       </div>
-      <div class="ticker-sep"></div>
-      <div class="ticker-item">
-        <span class="ticker-num" data-count="42">0</span>
-        <span class="ticker-label">Features</span>
-      </div>
-      <div class="ticker-sep"></div>
-      <div class="ticker-item">
-        <span class="ticker-num" data-count="5599">0</span>
-        <span class="ticker-label">Lines</span>
+      <div class="kn-banner-detail" id="kn-banner-detail">
+        <div class="kn-banner-detail-inner">
+          <h3>Where this is going</h3>
+          <p>Konstant started as a focused toolkit for one game — Roblox Supermoto. Through testing, the underlying physics, mod logic, and customization layer turned out to work across nearly every bike, e-bike, and scooter game on Roblox. So instead of staying narrow, we're widening the scope.</p>
+          <p>The next version detects the place ID at startup. In the original Supermoto place, it loads the full suite — economy exploits, the curated bike spawner, custom map tools. In any other game, it strips back to the universal core: physics tuning, ESP, anti-fall, optimizer, customization, and a generic spawner that hunts for bike folders and spawn remotes automatically. New brand name in that mode: <strong>Konstant Aero</strong>.</p>
+          <p>This is a structural change, not a rewrite. Everything you already use stays in the Supermoto build. The site, the script, and the docs are all moving together.</p>
+          <button class="kn-banner-close" id="kn-banner-close" type="button">Close</button>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="version-badge">
-      <span class="dot green"></span>
-      <span id="badge-ver">loading...</span>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-text" aria-hidden="true">KONSTANT</div>
+    <div class="hero-glow" aria-hidden="true"></div>
+
+    <div class="hero-inner">
+      <div class="eyebrow">Script Suite</div>
+
+      <h1 class="wordmark" id="wordmark" aria-label="KONSTANT">K<span class="slashed-o">O</span>NSTANT</h1>
+
+      <p class="hero-sub" id="hero-sub">
+        Precision tools for Roblox.<br>
+        Universal bike script.
+      </p>
+
+      <div class="ticker-row">
+        <div class="ticker-item">
+          <span class="ticker-num" data-count="1">0</span>
+          <span class="ticker-label">Projects</span>
+        </div>
+        <div class="ticker-item">
+          <span class="ticker-num" data-count="30">0</span>
+          <span class="ticker-label">Features</span>
+        </div>
+        <div class="ticker-item">
+          <span class="ticker-num" data-count="3200">0</span>
+          <span class="ticker-label">Lines</span>
+        </div>
+      </div>
+
+      <div class="version-badge">
+        <span class="dot green" id="dot-rel"></span>
+        <span id="badge-ver">loading...</span>
+        <span style="width:1px;height:10px;background:var(--border2);display:inline-block;margin:0 4px;vertical-align:middle;"></span>
+        <span class="dot green" id="dot-tes"></span>
+        <span id="badge-tes" style="color:var(--muted2);">...</span>
+      </div>
     </div>
 
     <div class="scroll-hint">
@@ -425,6 +657,12 @@
       <div class="scroll-arrow"></div>
     </div>
   </section>
+
+  <!-- MARQUEE BAND -->
+  <div class="marquee-band" id="marquee-band" aria-hidden="true">
+    <div class="marquee-row"><div class="marquee-track" id="mq-row-0"></div></div>
+    <div class="marquee-row"><div class="marquee-track rev" id="mq-row-1"></div></div>
+  </div>
 
   <!-- DOCS SECTION -->
   <section class="docs-section">
@@ -437,17 +675,20 @@
 
     <div class="doc-block fade-in">
       <h2>What is Konstant</h2>
-      <p>Konstant is an ongoing series of high-quality, client-side Lua scripts for Roblox. We focus on building the best, most polished execution suites with minimal interfaces and absolute precision.</p>
-      <p>Our current flagship release is built exclusively for Roblox supermoto and ebike games. What started as a small physics experiment has grown into a massive toolkit covering everything from advanced bike physics and custom tuning, to map loading, ESP, and economy exploits.</p>
+      <p>Konstant is a precision universal bike script for Roblox — built first for supermoto and ebike games, now expanding to cover bike, scooter, and movement-based games generally. It ships as a single loadstring with a full cheat and physics suite, minimal interface, and zero bloat.</p>
       <div class="tag-row">
-        <span class="tag">Lua 5.1</span>
         <span class="tag">Roblox</span>
+        <span class="tag">Lua 5.1</span>
         <span class="tag">LinoriaLib</span>
-        <span class="tag">Client-side</span>
       </div>
     </div>
 
-    <div class="doc-divider fade-in"></div>
+    <!-- UNIVERSAL BIKE SCRIPT section -->
+    <div class="doc-project-label fade-in">
+      <div class="doc-project-label-line"></div>
+      <span class="doc-project-label-text">Konstant — Universal Bike Script</span>
+      <div class="doc-project-label-line"></div>
+    </div>
 
     <div class="doc-block fade-in">
       <h2>Getting started</h2>
@@ -459,7 +700,7 @@
 
     <div class="doc-block fade-in">
       <h2>Tabs overview</h2>
-      <p>The main menu has five tabs. Money handles the economy exploits. Bikes gives you speed, brake, turn patches plus a bunch of physics mods. Mods is where the fun stuff lives: fly mode, anti-fall, rainbow, trail, wheelie and stoppie controls, drift stuff. Troll handles fling logic. ESP gives you overlays on other players and bikes.</p>
+      <p>The main menu has five tabs. Money handles the economy exploits. Bikes gives you speed, brake, turn patches plus a bunch of physics mods. Mods is where the fun stuff lives: fly mode, anti-fall, rainbow, speed underglow, wheelie and stoppie controls, drift stuff. Troll handles fling logic. ESP gives you overlays on other players and bikes.</p>
       <p>Settings saves your config to disk through LinoriaLib, so your toggles carry over between sessions.</p>
       <div class="tag-row">
         <span class="tag">Main</span>
@@ -478,6 +719,7 @@
       <h2>Bike patching</h2>
       <p>Get on your bike first, then hit Patch. Speed and acceleration are in mph, brake force is in mph/s, turn speed in degrees per second. They all work independently. Unpatching any of them disconnects the heartbeat loop for that specific one.</p>
       <p>Auto-fix Bike handles the back wheel clipping issue. When the game tweens the wheel to your click position on mount, it catches it, locks the wheel back to its pre-mount offset relative to the seat, and cycles gear state until it reads neutral.</p>
+      <p>Auto-land detects when you're 2–8 studs above the ground and gradually corrects your roll and pitch back to upright using a CFrame lerp. It preserves your yaw and never touches velocity, so it doesn't interfere with actual speed. Nitro Burst fires a forward acceleration burst on a configurable key with a cooldown and a HUD bar that shows charge state.</p>
     </div>
 
     <div class="doc-divider fade-in"></div>
@@ -532,7 +774,13 @@
     window.addEventListener('resize', resize);
 
     let mouseX = -9999, mouseY = -9999;
-    window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+    window.addEventListener('mousemove', e => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      const cx = (e.clientX / window.innerWidth  - 0.5) * 2;
+      const cy = (e.clientY / window.innerHeight - 0.5) * 2;
+      document.documentElement.style.setProperty('--px', cx.toFixed(3));
+      document.documentElement.style.setProperty('--py', cy.toFixed(3));
+    });
 
     let raf;
     function drawDots(ts) {
@@ -606,26 +854,138 @@
       .then(r => r.text())
       .then(t => {
         const lines = t.split('\n');
-        let status = 'unknown';
-        for (let line of lines) {
-          if (line.startsWith('konstant =')) {
-            const parts = line.split(' ');
-            if (parts.length >= 4) {
-              status = parts[3].trim();
-              document.getElementById('badge-ver').textContent = 'Live v' + parts[2];
-              break;
-            }
+        let relVer = null, relStatus = 'unknown';
+        let tesVer = null, tesStatus = 'unknown';
+        for (const line of lines) {
+          const parts = line.split(' ');
+          if (line.startsWith('konstant_testing =') && parts.length >= 4) {
+            tesVer = parts[2]; tesStatus = parts[3].trim();
+          } else if (line.startsWith('konstant =') && parts.length >= 4) {
+            relVer = parts[2]; relStatus = parts[3].trim();
           }
         }
-        if (status === 'unknown') {
-            document.getElementById('badge-ver').textContent = 'Unknown';
-        } else if (status !== 'working') {
-            document.getElementById('badge-ver').textContent = 'Offline';
-        }
-        const dot = document.querySelector('.version-badge .dot');
-        dot.className = 'dot ' + (status === 'working' ? 'green' : 'red');
+        document.getElementById('badge-ver').textContent = relVer ? 'v' + relVer : 'unknown';
+        document.getElementById('badge-tes').textContent = tesVer ? 'tes ' + tesVer : '?';
+        document.getElementById('dot-rel').className = 'dot ' + (relStatus === 'working' ? 'green' : 'red');
+        document.getElementById('dot-tes').className = 'dot ' + (tesStatus === 'working' ? 'green' : 'red');
       })
-      .catch(() => { document.getElementById('badge-ver').textContent = 'unknown'; });
+      .catch(() => {
+        document.getElementById('badge-ver').textContent = 'unknown';
+        document.getElementById('badge-tes').textContent = '?';
+      });
+
+    // ---- scramble reveal for wordmark ----
+    (function() {
+      const el = document.getElementById('wordmark');
+      const full = 'KONSTANT';
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&';
+      const FRAMES_PER_LETTER = 3;
+      const SCRAMBLE_END = full.length * FRAMES_PER_LETTER + 8;
+      let frame = 0;
+
+      function render(revealed) {
+        let html = '';
+        for (let i = 0; i < full.length; i++) {
+          const r = chars[Math.floor(Math.random() * chars.length)];
+          if (full[i] === 'O') {
+            html += i < revealed
+              ? '<span class="slashed-o">O</span>'
+              : `<span class="slashed-o" style="opacity:0.35">${r}</span>`;
+          } else {
+            html += i < revealed
+              ? full[i]
+              : `<span style="opacity:0.35">${r}</span>`;
+          }
+        }
+        el.innerHTML = html;
+      }
+
+      setTimeout(function() {
+        var iv = setInterval(function() {
+          frame++;
+          var revealed = Math.max(0, Math.min(Math.floor(frame / FRAMES_PER_LETTER), full.length));
+          if (frame >= SCRAMBLE_END || revealed >= full.length) {
+            el.innerHTML = 'K<span class="slashed-o">O</span>NSTANT';
+            clearInterval(iv);
+            return;
+          }
+          render(revealed);
+        }, 50);
+      }, 300);
+    })();
+
+    // ---- typewriter for hero-sub ----
+    (function() {
+      var el = document.getElementById('hero-sub');
+      var text = 'Precision tools for Roblox.\nUniversal bike script.';
+      el.innerHTML = '';
+      el.style.opacity = '1';
+      el.style.animation = 'none';
+
+      var cursor = document.createElement('span');
+      cursor.className = 'tw-cursor';
+      el.appendChild(cursor);
+      var i = 0;
+
+      setTimeout(function() {
+        var iv = setInterval(function() {
+          if (i >= text.length) { clearInterval(iv); return; }
+          var ch = text[i];
+          if (ch === '\n') {
+            cursor.before(document.createElement('br'));
+          } else {
+            cursor.before(document.createTextNode(ch));
+          }
+          i++;
+        }, 36);
+      }, 1400);
+    })();
+
+    // ---- marquee population ----
+    (function() {
+      var ROW0 = [
+        { text: 'Bike Patching',     hi: false },
+        { text: 'Speed Underglow',   hi: true  },
+        { text: 'Auto-land',         hi: true  },
+        { text: 'Nitro Burst',       hi: true  },
+        { text: 'ESP Overlays',      hi: false },
+        { text: 'Economy Exploits',  hi: false },
+        { text: 'Fly Mode',          hi: false },
+        { text: 'Anti-Fall',         hi: false },
+        { text: 'Drift Controls',    hi: false },
+        { text: 'Map Loader',        hi: false },
+        { text: 'Config Saving',     hi: false },
+        { text: 'Troll Module',      hi: false },
+      ];
+      var ROW1 = [
+        { text: 'LinoriaLib UI',        hi: false },
+        { text: 'Hookmetamethod',        hi: false },
+        { text: 'Client-side Lua',       hi: false },
+        { text: 'Session Logging',       hi: false },
+        { text: 'CFrame Lerp',          hi: false },
+        { text: 'Heartbeat Loops',      hi: false },
+        { text: 'Gear State Machine',   hi: false },
+        { text: 'Universal Bike Script', hi: true  },
+        { text: 'Physics Patches',      hi: false },
+        { text: 'Live Updates',         hi: false },
+        { text: 'Dedup Guard',          hi: false },
+        { text: 'Workspace Configs',    hi: false },
+      ];
+
+      function buildTrack(items, reps) {
+        var all = [];
+        for (var r = 0; r < reps; r++) all = all.concat(items);
+        return all.map(function(item) {
+          return '<span class="marquee-item' + (item.hi ? ' hi' : '') + '">'
+            + '<span class="marquee-sep">&#9670;</span>' + item.text + '</span>';
+        }).join('');
+      }
+
+      var t0 = document.getElementById('mq-row-0');
+      var t1 = document.getElementById('mq-row-1');
+      if (t0) t0.innerHTML = buildTrack(ROW0, 4);
+      if (t1) t1.innerHTML = buildTrack(ROW1, 4);
+    })();
 
     // ---- if already authed, modify open button ----
     if (localStorage.getItem('k_auth') === '1') {
@@ -633,6 +993,20 @@
       btn.href = 'dashboard.html';
       btn.querySelector('span').textContent = 'Dashboard';
     }
+
+    // ---- upgrade banner ----
+    (function() {
+      var banner = document.getElementById('kn-banner');
+      var learn  = document.getElementById('kn-banner-learn');
+      var close  = document.getElementById('kn-banner-close');
+      if (!banner || !learn) return;
+      learn.addEventListener('click', function() {
+        banner.classList.toggle('open');
+      });
+      if (close) close.addEventListener('click', function() {
+        banner.classList.remove('open');
+      });
+    })();
   </script>
   <script src="favicon.js"></script>
 </body>
