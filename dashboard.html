@@ -535,105 +535,154 @@
     /* ============================================================
        KONSTANT AERO MODE — soft blue + beige theme with drifting blur
        ============================================================ */
+
+    /* Universal transitions: apply to every surface that swaps in/out of aero.
+       Lives outside .aero-mode rules so the *exit* animates too.            */
+    body,
+    .sidebar, .brand, .brand .so, .nav-section-label,
+    .tab-btn, .tab-btn .left, .tab-btn .left span,
+    .sidebar-footer, .sidebar-footer div, .sidebar-footer a,
+    .top-bar, .main-content, .page-title, .version-tag,
+    .stat-card, .stat-card .stat-label, .stat-card .stat-sub, .stat-card .stat-value,
+    .box-title, .code-box, .code-box-header,
+    .code-box-content, .code-box-content .load-view,
+    .btn, .btn-primary, .btn-ghost,
+    .feat-section, .feat-section-hdr,
+    .feat-group, .feat-group-title, .feat-item, .feat-item code, .feat-footnote,
+    .aero-title, .aero-sub, .aero-footer {
+      transition:
+        background 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        color 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        backdrop-filter 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.45s ease;
+    }
+
     body.aero-mode {
       background:
-        linear-gradient(135deg, #d9e8ff 0%, #fdf6e3 100%) fixed;
-      color: #1a3050;
-      transition: background 0.6s ease, color 0.6s ease;
+        linear-gradient(135deg, #d4e4ff 0%, #fff4d9 100%) fixed;
+      color: #0e2540;
     }
     body.aero-mode::before,
     body.aero-mode::after {
       content: '';
       position: fixed;
-      width: 640px; height: 640px;
+      width: 720px; height: 720px;
       border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.55;
+      filter: blur(100px);
+      opacity: 0.7;
       pointer-events: none;
       z-index: 0;
+      animation-fill-mode: both;
     }
     body.aero-mode::before {
-      background: #8aaeff;
-      top: -220px; left: -140px;
-      animation: aeroDrift1 22s ease-in-out infinite alternate;
+      background: #7da4ff;
+      top: -240px; left: -160px;
+      animation:
+        aeroDrift1 22s ease-in-out infinite alternate,
+        aeroFadeIn 0.7s ease both;
     }
     body.aero-mode::after {
-      background: #f0d6a0;
-      bottom: -240px; right: -160px;
-      animation: aeroDrift2 26s ease-in-out infinite alternate;
+      background: #f5d28a;
+      bottom: -260px; right: -180px;
+      animation:
+        aeroDrift2 26s ease-in-out infinite alternate,
+        aeroFadeIn 0.7s ease 0.05s both;
     }
+    @keyframes aeroFadeIn { from { opacity: 0; } to { opacity: 0.7; } }
     @keyframes aeroDrift1 {
       0%   { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(160px, 120px) scale(1.18); }
+      100% { transform: translate(180px, 130px) scale(1.22); }
     }
     @keyframes aeroDrift2 {
       0%   { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(-180px, -90px) scale(1.22); }
+      100% { transform: translate(-200px, -100px) scale(1.25); }
     }
-    /* aero adapts sidebar + content surfaces */
+
+    /* === aero surfaces (brighter than first pass) === */
     body.aero-mode .sidebar {
-      background: rgba(255,255,255,0.55);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-right-color: rgba(40, 70, 130, 0.18);
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border-right-color: rgba(40, 70, 130, 0.28);
     }
     body.aero-mode .brand,
-    body.aero-mode .brand .so { color: #1a3050; }
-    body.aero-mode .nav-section-label { color: #5a6f8a; }
-    body.aero-mode .tab-btn { color: #3a5070; }
+    body.aero-mode .brand .so { color: #0e2540; }
+    body.aero-mode .nav-section-label { color: #3a5070; }
+    body.aero-mode .tab-btn,
+    body.aero-mode .tab-btn .left span { color: #1a3050; }
     body.aero-mode .tab-btn:hover {
-      background: rgba(80, 120, 200, 0.08);
-      color: #1a3050;
+      background: rgba(80, 120, 200, 0.12);
+      color: #0e2540;
     }
     body.aero-mode .tab-btn.active {
-      background: rgba(80, 120, 200, 0.18);
-      color: #1a3050;
-      border-left-color: #4a78c8;
+      background: rgba(80, 120, 200, 0.26);
+      color: #0e2540;
+      border-left-color: #3a68b8;
     }
     body.aero-mode .sidebar-footer,
     body.aero-mode .sidebar-footer #sync-status,
-    body.aero-mode .sidebar-footer #last-updated,
-    body.aero-mode .sidebar-footer a { color: #5a6f8a; }
-    body.aero-mode .top-bar,
-    body.aero-mode .main-content {
-      background: transparent;
-      border-color: rgba(40, 70, 130, 0.15);
-    }
-    body.aero-mode .page-title { color: #1a3050; }
+    body.aero-mode .sidebar-footer #last-updated { color: #3a5070; }
+    body.aero-mode .sidebar-footer a { color: #3a68b8; }
+    body.aero-mode .top-bar { background: transparent; border-color: rgba(40, 70, 130, 0.22); }
+    body.aero-mode .main-content { background: transparent; }
+    body.aero-mode .page-title { color: #0e2540; }
     body.aero-mode .version-tag {
-      background: rgba(255,255,255,0.45);
-      border-color: rgba(80, 120, 200, 0.3);
-      color: #1a3050;
+      background: rgba(255,255,255,0.7);
+      border-color: rgba(80, 120, 200, 0.42);
+      color: #0e2540;
     }
     body.aero-mode .stat-card {
-      background: rgba(255,255,255,0.55);
-      border-color: rgba(80, 120, 200, 0.22);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    body.aero-mode .stat-card .stat-label,
-    body.aero-mode .stat-card .stat-sub { color: #5a6f8a; }
-    body.aero-mode .stat-card .stat-value { color: #1a3050; }
-    body.aero-mode .box-title { color: #1a3050; }
-    body.aero-mode .code-box {
-      background: rgba(255,255,255,0.6);
-      border-color: rgba(80, 120, 200, 0.25);
+      background: rgba(255, 255, 255, 0.74);
+      border-color: rgba(80, 120, 200, 0.35);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
     }
-    body.aero-mode .code-box-header { background: rgba(255,255,255,0.4); }
-    body.aero-mode .code-box-content,
-    body.aero-mode .code-box-content .load-view { color: #1a3050; }
-    body.aero-mode .btn-primary {
-      background: #4a78c8;
-      border-color: #4a78c8;
-      color: #fdf6e3;
+    body.aero-mode .stat-card .stat-label { color: #3a5070; }
+    body.aero-mode .stat-card .stat-sub   { color: #4a607a; }
+    body.aero-mode .stat-card .stat-value { color: #0e2540; }
+    body.aero-mode .box-title { color: #0e2540; }
+    body.aero-mode .code-box {
+      background: rgba(255, 255, 255, 0.78);
+      border-color: rgba(80, 120, 200, 0.4);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
-    body.aero-mode .btn-primary:hover { background: #3a68b8; }
+    body.aero-mode .code-box-header {
+      background: rgba(255, 255, 255, 0.6);
+      color: #3a5070;
+    }
+    body.aero-mode .code-box-content,
+    body.aero-mode .code-box-content .load-view { color: #0e2540; }
+    body.aero-mode .btn-primary {
+      background: #3a68b8;
+      border-color: #3a68b8;
+      color: #fff4d9;
+    }
+    body.aero-mode .btn-primary:hover { background: #2a58a8; color: #ffffff; }
     body.aero-mode .btn-ghost {
-      color: #5a6f8a;
+      color: #3a5070;
+      border-color: rgba(80, 120, 200, 0.45);
+    }
+    body.aero-mode .btn-ghost:hover {
+      color: #0e2540;
+      border-color: #3a68b8;
+    }
+    /* feature section / executor requirements */
+    body.aero-mode .feat-section-hdr { color: #0e2540; }
+    body.aero-mode .feat-group {
+      background: rgba(255, 255, 255, 0.62);
       border-color: rgba(80, 120, 200, 0.3);
     }
+    body.aero-mode .feat-group-title { color: #3a68b8; }
+    body.aero-mode .feat-item { color: #1a3050; }
+    body.aero-mode .feat-item code {
+      background: rgba(58, 104, 184, 0.12);
+      color: #0e2540;
+    }
+    body.aero-mode .feat-footnote { color: #4a607a; }
+
     /* main content sits above the drifting blobs */
     body.aero-mode .sidebar,
     body.aero-mode .main-content { position: relative; z-index: 1; }
