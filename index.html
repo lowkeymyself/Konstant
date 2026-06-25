@@ -492,83 +492,6 @@
     }
     @keyframes twBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-    /* ============================================================
-       UPGRADE BANNER — universal-script announcement
-       ============================================================ */
-    .kn-banner {
-      position: relative;
-      width: 100%;
-      z-index: 50;
-      background: linear-gradient(180deg, var(--bg-sub, #0c0c0c), var(--bg, #050505));
-      border-bottom: 1px solid var(--border, #1c1c1c);
-      overflow: hidden;
-    }
-    .kn-banner-inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
-    .kn-banner-strip { display: flex; align-items: center; gap: 16px; padding: 14px 0; }
-    .kn-banner-pulse {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--green, #4caf50);
-      animation: knBannerPulse 1.8s ease-out infinite;
-      flex: 0 0 auto;
-    }
-    @keyframes knBannerPulse {
-      0%   { box-shadow: 0 0 0 0    rgba(76,175,80, 0.45); }
-      100% { box-shadow: 0 0 0 12px rgba(76,175,80, 0); }
-    }
-    .kn-banner-text {
-      flex: 1 1 auto; display: flex; align-items: baseline; gap: 12px;
-      color: var(--text, #e6e6e6); font-size: 14px; min-width: 0;
-    }
-    .kn-banner-eyebrow {
-      font-family: var(--font-mono, monospace); font-size: 10px;
-      color: var(--green, #4caf50); letter-spacing: 0.3em;
-      padding: 3px 8px; border: 1px solid var(--green, #4caf50);
-      border-radius: 2px; flex: 0 0 auto;
-    }
-    .kn-banner-msg { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .kn-banner-soon { color: var(--muted, #888); font-style: italic; flex: 0 0 auto; }
-    .kn-banner-learn {
-      flex: 0 0 auto; background: transparent; color: var(--text, #e6e6e6);
-      border: 1px solid var(--border2, #2a2a2a); padding: 7px 16px;
-      font-family: var(--font-mono, monospace); font-size: 11px;
-      letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
-      border-radius: 2px; transition: all 0.18s ease;
-    }
-    .kn-banner-learn:hover {
-      border-color: var(--green, #4caf50); color: var(--green, #4caf50);
-      letter-spacing: 0.22em;
-    }
-    .kn-banner-detail {
-      max-height: 0; opacity: 0; overflow: hidden;
-      transition: max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease 0.05s;
-    }
-    .kn-banner.open .kn-banner-detail { max-height: 560px; opacity: 1; }
-    .kn-banner-detail-inner {
-      padding: 8px 0 28px; max-width: 760px;
-      border-top: 1px solid var(--border, #1c1c1c); margin-top: 4px;
-    }
-    .kn-banner-detail-inner h3 {
-      margin: 22px 0 12px;
-      font-family: var(--font-mono, monospace); font-size: 11px;
-      color: var(--green, #4caf50); letter-spacing: 0.25em; text-transform: uppercase;
-    }
-    .kn-banner-detail-inner p {
-      font-size: 13px; line-height: 1.65;
-      color: var(--muted, #aaa); margin: 0 0 14px;
-    }
-    .kn-banner-detail-inner p strong { color: var(--text, #e6e6e6); font-weight: 600; }
-    .kn-banner-close {
-      margin-top: 12px; background: transparent;
-      color: var(--muted, #888); border: 1px solid var(--border2, #2a2a2a);
-      padding: 6px 14px; font-family: var(--font-mono, monospace);
-      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-      cursor: pointer; border-radius: 2px; transition: all 0.15s ease;
-    }
-    .kn-banner-close:hover { color: var(--text); border-color: var(--text); }
-    @media (max-width: 720px) {
-      .kn-banner-strip { flex-wrap: wrap; }
-      .kn-banner-msg { white-space: normal; }
-    }
   </style>
 </head>
 <body>
@@ -588,30 +511,6 @@
 
   <!-- toast -->
   <div id="toast"></div>
-
-  <!-- UPGRADE BANNER -->
-  <div class="kn-banner" id="kn-banner">
-    <div class="kn-banner-inner">
-      <div class="kn-banner-strip">
-        <span class="kn-banner-pulse" aria-hidden="true"></span>
-        <div class="kn-banner-text">
-          <span class="kn-banner-eyebrow">UPGRADING</span>
-          <span class="kn-banner-msg">Konstant is becoming a universal movement script.</span>
-          <span class="kn-banner-soon">Coming soon.</span>
-        </div>
-        <button class="kn-banner-learn" id="kn-banner-learn" type="button">Learn more</button>
-      </div>
-      <div class="kn-banner-detail" id="kn-banner-detail">
-        <div class="kn-banner-detail-inner">
-          <h3>Where this is going</h3>
-          <p>Konstant started as a focused toolkit for one game — Roblox Supermoto. Through testing, the underlying physics, mod logic, and customization layer turned out to work across nearly every bike, e-bike, and scooter game on Roblox. So instead of staying narrow, we're widening the scope.</p>
-          <p>The next version detects the place ID at startup. In the original Supermoto place, it loads the full suite — economy exploits, the curated bike spawner, custom map tools. In any other game, it strips back to the universal core: physics tuning, ESP, anti-fall, optimizer, customization, and a generic spawner that hunts for bike folders and spawn remotes automatically. New brand name in that mode: <strong>Konstant Aero</strong>.</p>
-          <p>This is a structural change, not a rewrite. Everything you already use stays in the Supermoto build. The site, the script, and the docs are all moving together.</p>
-          <button class="kn-banner-close" id="kn-banner-close" type="button">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- HERO -->
   <section class="hero">
@@ -994,19 +893,6 @@
       btn.querySelector('span').textContent = 'Dashboard';
     }
 
-    // ---- upgrade banner ----
-    (function() {
-      var banner = document.getElementById('kn-banner');
-      var learn  = document.getElementById('kn-banner-learn');
-      var close  = document.getElementById('kn-banner-close');
-      if (!banner || !learn) return;
-      learn.addEventListener('click', function() {
-        banner.classList.toggle('open');
-      });
-      if (close) close.addEventListener('click', function() {
-        banner.classList.remove('open');
-      });
-    })();
   </script>
   <script src="favicon.js"></script>
 </body>

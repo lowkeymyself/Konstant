@@ -533,80 +533,139 @@
     }
 
     /* ============================================================
-       UPGRADE BANNER — universal-script announcement
+       KONSTANT AERO MODE — soft blue + beige theme with drifting blur
        ============================================================ */
-    .kn-banner {
-      position: relative;
-      width: 100%;
-      z-index: 50;
-      margin-bottom: 20px;
-      background: linear-gradient(180deg, var(--bg-sub, #0c0c0c), var(--bg, #050505));
-      border: 1px solid var(--border, #1c1c1c);
-      border-radius: 4px;
-      overflow: hidden;
+    body.aero-mode {
+      background:
+        linear-gradient(135deg, #d9e8ff 0%, #fdf6e3 100%) fixed;
+      color: #1a3050;
+      transition: background 0.6s ease, color 0.6s ease;
     }
-    .kn-banner-inner { padding: 0 20px; }
-    .kn-banner-strip { display: flex; align-items: center; gap: 14px; padding: 12px 0; }
-    .kn-banner-pulse {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--green, #4caf50);
-      animation: knBannerPulse 1.8s ease-out infinite;
-      flex: 0 0 auto;
+    body.aero-mode::before,
+    body.aero-mode::after {
+      content: '';
+      position: fixed;
+      width: 640px; height: 640px;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.55;
+      pointer-events: none;
+      z-index: 0;
     }
-    @keyframes knBannerPulse {
-      0%   { box-shadow: 0 0 0 0    rgba(76,175,80, 0.45); }
-      100% { box-shadow: 0 0 0 12px rgba(76,175,80, 0); }
+    body.aero-mode::before {
+      background: #8aaeff;
+      top: -220px; left: -140px;
+      animation: aeroDrift1 22s ease-in-out infinite alternate;
     }
-    .kn-banner-text {
-      flex: 1 1 auto; display: flex; align-items: baseline; gap: 12px;
-      color: var(--text, #e6e6e6); font-size: 13px; min-width: 0;
+    body.aero-mode::after {
+      background: #f0d6a0;
+      bottom: -240px; right: -160px;
+      animation: aeroDrift2 26s ease-in-out infinite alternate;
     }
-    .kn-banner-eyebrow {
-      font-family: var(--font-mono, monospace); font-size: 10px;
-      color: var(--green, #4caf50); letter-spacing: 0.3em;
-      padding: 3px 8px; border: 1px solid var(--green, #4caf50);
-      border-radius: 2px; flex: 0 0 auto;
+    @keyframes aeroDrift1 {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(160px, 120px) scale(1.18); }
     }
-    .kn-banner-msg { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .kn-banner-soon { color: var(--muted, #888); font-style: italic; flex: 0 0 auto; }
-    .kn-banner-learn {
-      flex: 0 0 auto; background: transparent; color: var(--text, #e6e6e6);
-      border: 1px solid var(--border2, #2a2a2a); padding: 6px 14px;
-      font-family: var(--font-mono, monospace); font-size: 10px;
-      letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer;
-      border-radius: 2px; transition: all 0.18s ease;
+    @keyframes aeroDrift2 {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-180px, -90px) scale(1.22); }
     }
-    .kn-banner-learn:hover {
-      border-color: var(--green, #4caf50); color: var(--green, #4caf50);
-      letter-spacing: 0.22em;
+    /* aero adapts sidebar + content surfaces */
+    body.aero-mode .sidebar {
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right-color: rgba(40, 70, 130, 0.18);
     }
-    .kn-banner-detail {
-      max-height: 0; opacity: 0; overflow: hidden;
-      transition: max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease 0.05s;
+    body.aero-mode .brand,
+    body.aero-mode .brand .so { color: #1a3050; }
+    body.aero-mode .nav-section-label { color: #5a6f8a; }
+    body.aero-mode .tab-btn { color: #3a5070; }
+    body.aero-mode .tab-btn:hover {
+      background: rgba(80, 120, 200, 0.08);
+      color: #1a3050;
     }
-    .kn-banner.open .kn-banner-detail { max-height: 560px; opacity: 1; }
-    .kn-banner-detail-inner {
-      padding: 6px 0 24px; max-width: 760px;
-      border-top: 1px solid var(--border, #1c1c1c); margin-top: 4px;
+    body.aero-mode .tab-btn.active {
+      background: rgba(80, 120, 200, 0.18);
+      color: #1a3050;
+      border-left-color: #4a78c8;
     }
-    .kn-banner-detail-inner h3 {
-      margin: 18px 0 10px;
-      font-family: var(--font-mono, monospace); font-size: 11px;
-      color: var(--green, #4caf50); letter-spacing: 0.25em; text-transform: uppercase;
+    body.aero-mode .sidebar-footer,
+    body.aero-mode .sidebar-footer #sync-status,
+    body.aero-mode .sidebar-footer #last-updated,
+    body.aero-mode .sidebar-footer a { color: #5a6f8a; }
+    body.aero-mode .top-bar,
+    body.aero-mode .main-content {
+      background: transparent;
+      border-color: rgba(40, 70, 130, 0.15);
     }
-    .kn-banner-detail-inner p {
-      font-size: 13px; line-height: 1.65;
-      color: var(--muted, #aaa); margin: 0 0 12px;
+    body.aero-mode .page-title { color: #1a3050; }
+    body.aero-mode .version-tag {
+      background: rgba(255,255,255,0.45);
+      border-color: rgba(80, 120, 200, 0.3);
+      color: #1a3050;
     }
-    .kn-banner-detail-inner p strong { color: var(--text, #e6e6e6); font-weight: 600; }
-    .kn-banner-close {
-      margin-top: 10px; background: transparent;
-      color: var(--muted, #888); border: 1px solid var(--border2, #2a2a2a);
-      padding: 6px 14px; font-family: var(--font-mono, monospace);
-      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-      cursor: pointer; border-radius: 2px; transition: all 0.15s ease;
+    body.aero-mode .stat-card {
+      background: rgba(255,255,255,0.55);
+      border-color: rgba(80, 120, 200, 0.22);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
-    .kn-banner-close:hover { color: var(--text); border-color: var(--text); }
+    body.aero-mode .stat-card .stat-label,
+    body.aero-mode .stat-card .stat-sub { color: #5a6f8a; }
+    body.aero-mode .stat-card .stat-value { color: #1a3050; }
+    body.aero-mode .box-title { color: #1a3050; }
+    body.aero-mode .code-box {
+      background: rgba(255,255,255,0.6);
+      border-color: rgba(80, 120, 200, 0.25);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    body.aero-mode .code-box-header { background: rgba(255,255,255,0.4); }
+    body.aero-mode .code-box-content,
+    body.aero-mode .code-box-content .load-view { color: #1a3050; }
+    body.aero-mode .btn-primary {
+      background: #4a78c8;
+      border-color: #4a78c8;
+      color: #fdf6e3;
+    }
+    body.aero-mode .btn-primary:hover { background: #3a68b8; }
+    body.aero-mode .btn-ghost {
+      color: #5a6f8a;
+      border-color: rgba(80, 120, 200, 0.3);
+    }
+    /* main content sits above the drifting blobs */
+    body.aero-mode .sidebar,
+    body.aero-mode .main-content { position: relative; z-index: 1; }
+
+    /* aero panel layout */
+    .aero-hero {
+      text-align: center;
+      padding: 60px 20px 40px;
+    }
+    .aero-title {
+      font-size: 64px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin: 0 0 16px;
+      color: inherit;
+    }
+    .aero-sub {
+      font-size: 17px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin: 0;
+    }
+    .aero-footer {
+      margin-top: 50px;
+      padding: 18px 0;
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.55;
+    }
 
   </style>
 </head>
@@ -637,6 +696,13 @@
         </div>
       </button>
 
+      <button class="tab-btn" data-target="aero">
+        <div class="left">
+          <span class="dot green"></span>
+          <span>Konstant Aero</span>
+        </div>
+      </button>
+
     </div>
 
     <div class="sidebar-footer">
@@ -648,30 +714,6 @@
 
   <!-- MAIN -->
   <main class="main-content">
-
-    <!-- UPGRADE BANNER -->
-    <div class="kn-banner" id="kn-banner">
-      <div class="kn-banner-inner">
-        <div class="kn-banner-strip">
-          <span class="kn-banner-pulse" aria-hidden="true"></span>
-          <div class="kn-banner-text">
-            <span class="kn-banner-eyebrow">UPGRADING</span>
-            <span class="kn-banner-msg">Konstant is becoming a universal movement script.</span>
-            <span class="kn-banner-soon">Coming soon.</span>
-          </div>
-          <button class="kn-banner-learn" id="kn-banner-learn" type="button">Learn more</button>
-        </div>
-        <div class="kn-banner-detail" id="kn-banner-detail">
-          <div class="kn-banner-detail-inner">
-            <h3>Where this is going</h3>
-            <p>Konstant started as a focused toolkit for one game — Roblox Supermoto. Through testing, the underlying physics, mod logic, and customization layer turned out to work across nearly every bike, e-bike, and scooter game on Roblox. So instead of staying narrow, we're widening the scope.</p>
-            <p>The next version detects the place ID at startup. In the original Supermoto place, it loads the full suite — economy exploits, the curated bike spawner, custom map tools. In any other game, it strips back to the universal core: physics tuning, ESP, anti-fall, optimizer, customization, and a generic spawner that hunts for bike folders and spawn remotes automatically. New brand name in that mode: <strong>Konstant Aero</strong>.</p>
-            <p>This is a structural change, not a rewrite. Everything you already use stays in the Supermoto build. The site, the script, and the docs are all moving together.</p>
-            <button class="kn-banner-close" id="kn-banner-close" type="button">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <div class="top-bar">
       <div class="page-title" id="page-title">Release Branch</div>
@@ -751,6 +793,31 @@
             <button class="btn btn-primary" id="btn-copy-testing"><span>Copy</span></button>
           </div>
         </div>
+      </div>
+
+      <!-- AERO PANEL -->
+      <div class="tab-panel" id="panel-aero">
+        <div class="aero-hero">
+          <h1 class="aero-title">Konstant Aero</h1>
+          <p class="aero-sub">Same script, but universal.</p>
+        </div>
+
+        <div class="box-title">Execution String</div>
+
+        <div class="code-box">
+          <div class="code-box-header">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <div style="font-size:11px;">Lua — Universal mode</div>
+          </div>
+          <div class="code-box-content" id="code-aero">
+            <div class="load-view">loadstring(game:HttpGet("https://raw.githubusercontent.com/lowkeymyself/HowToAccountJadeShipClaudeTryHackMe/refs/heads/main/ins.lua"))()</div>
+          </div>
+          <div class="code-box-footer">
+            <button class="btn btn-primary" id="btn-copy-aero"><span>Copy</span></button>
+          </div>
+        </div>
+
+        <div class="aero-footer">Join any game with vehicles, and use Konstant Aero!</div>
       </div>
 
       <!-- EXECUTOR REQUIREMENTS — what your executor must support to run Konstant -->
@@ -890,12 +957,24 @@
         tabs.forEach(x => x.classList.remove('active'));
         panels.forEach(x => x.classList.remove('active'));
         t.classList.add('active');
-        
+
         const target = t.dataset.target;
         document.getElementById(`panel-${target}`).classList.add('active');
-        
-        pageTitle.textContent = target === 'release' ? 'Release Branch' : 'Testing Branch';
-          topVer.textContent    = target === 'release' ? state.relVer    : state.tesVer;
+
+        // Aero mode: flip body theme to blue/beige + drifting blur
+        if (target === 'aero') {
+          document.body.classList.add('aero-mode');
+        } else {
+          document.body.classList.remove('aero-mode');
+        }
+
+        // Page title + version reflect the active panel
+        if (target === 'release')      pageTitle.textContent = 'Release Branch';
+        else if (target === 'testing') pageTitle.textContent = 'Testing Branch';
+        else if (target === 'aero')    pageTitle.textContent = 'Aero — Universal';
+
+        if (target !== 'aero') {
+          topVer.textContent = target === 'release' ? state.relVer : state.tesVer;
           if (state.relVer !== 'v---') {
             document.getElementById('stat-branch').textContent = target;
             setStatCards(
@@ -903,6 +982,7 @@
               target === 'release' ? state.relStatus : state.tesStatus
             );
           }
+        }
       });
     });
 
@@ -964,6 +1044,18 @@
         toast(isSource ? 'Source code copied.' : 'Execution string copied.');
       });
     });
+
+    // Aero copy (no source toggle — it's the same script as release)
+    (function () {
+      const cb = document.getElementById('btn-copy-aero');
+      if (!cb) return;
+      cb.addEventListener('click', () => {
+        const box = document.getElementById('code-aero');
+        const text = box.querySelector('.load-view').textContent;
+        navigator.clipboard.writeText(text.trim());
+        toast('Execution string copied.');
+      });
+    })();
 
     // Fetch and sync data
     async function initData() {
@@ -1036,15 +1128,6 @@
       window.location.href = 'auth.html';
     });
 
-    // upgrade banner expand/collapse
-    (function() {
-      var banner = document.getElementById('kn-banner');
-      var learn  = document.getElementById('kn-banner-learn');
-      var close  = document.getElementById('kn-banner-close');
-      if (!banner || !learn) return;
-      learn.addEventListener('click', function() { banner.classList.toggle('open'); });
-      if (close) close.addEventListener('click', function() { banner.classList.remove('open'); });
-    })();
   </script>
   <script src="favicon.js"></script>
 </body>

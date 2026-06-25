@@ -1,6 +1,8 @@
-# Konstant
+# Konstant Hub
 
-~~not working~~
-working
+This repository contains the GitHub Pages frontend for the **Konstant** script suite.
 
-moving now to make it universal, not just a simple script, able to adapt movement features to any game
+**Note for development:** 
+This website interface is connected to the primary Supermoto script located locally at `C:\Users\joaol\Downloads\Programs\SuperMoto\script.lua`. 
+
+The live execution strings hosted on this dashboard dynamically pull from the `ins.lua` and `tes.lua` files, pushing updates directly to the Roblox client.
