@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KONSTANT</title>
-  <meta name="description" content="Konstant — Precision tools for Roblox. Universal bike script.">
+  <meta name="description" content="Konstant — Precision tools for Roblox. Universal bike script. Konstant A* waypoint autodriver: record a path by driving it, then let the script drive it back.">
   <link rel="stylesheet" href="style.css">
   <style>
     /* ---- landing-specific ---- */
@@ -507,7 +507,7 @@
   <div class="corner tl">K N S T</div>
   <div class="corner tr" id="corner-time"></div>
   <div class="corner bl">2026</div>
-  <div class="corner br">RBLX</div>
+  <div class="corner br">RBLX · A*</div>
 
   <!-- toast -->
   <div id="toast"></div>
@@ -524,20 +524,20 @@
 
       <p class="hero-sub" id="hero-sub">
         Precision tools for Roblox.<br>
-        Universal bike script.
+        Universal bike script. Waypoint autodriver.
       </p>
 
       <div class="ticker-row">
         <div class="ticker-item">
-          <span class="ticker-num" data-count="1">0</span>
+          <span class="ticker-num" data-count="2">0</span>
           <span class="ticker-label">Projects</span>
         </div>
         <div class="ticker-item">
-          <span class="ticker-num" data-count="30">0</span>
+          <span class="ticker-num" data-count="38">0</span>
           <span class="ticker-label">Features</span>
         </div>
         <div class="ticker-item">
-          <span class="ticker-num" data-count="3200">0</span>
+          <span class="ticker-num" data-count="4200">0</span>
           <span class="ticker-label">Lines</span>
         </div>
       </div>
@@ -634,6 +634,38 @@
     <div class="doc-block fade-in">
       <h2>Notes on testing builds</h2>
       <p>Testing builds pull from a separate branch and may have partially finished features or logic that changes between sessions. They work, but they're not stable. If something breaks in testing, that's expected.</p>
+    </div>
+
+    <!-- KONSTANT A* section -->
+    <div class="doc-project-label fade-in">
+      <div class="doc-project-label-line"></div>
+      <span class="doc-project-label-text">Konstant A* — Waypoint Autodriver</span>
+      <div class="doc-project-label-line"></div>
+    </div>
+
+    <div class="doc-block fade-in">
+      <h2>What is Konstant A*</h2>
+      <p>Konstant A* is a universal waypoint autodriver. You record a route once by simply driving it — the script samples your line every stud and paints it onto the ground as you go. Made a mistake? Hold rewind and the path walks you backwards so you can redo the section: green is your path, red is the part you're replacing, yellow is the redone line. End the path at your destination, name it, and it saves per-game to your executor's workspace.</p>
+      <p>On playback it doesn't teleport or glide — it actually drives. A pure pursuit controller steers the vehicle along your recorded line using the game's own physics, follows your recorded speed profile, brakes for anything blocking the lane, and resumes when it clears. Each run it learns: corners it took too wide get braked earlier next time.</p>
+      <div class="tag-row">
+        <span class="tag">Universal</span>
+        <span class="tag">Pure Pursuit</span>
+        <span class="tag">Per-Game Saves</span>
+      </div>
+    </div>
+
+    <div class="doc-divider fade-in"></div>
+
+    <div class="doc-block fade-in">
+      <h2>Using it</h2>
+      <p>Run the loadstring in any game, click the K icon at the top of your screen, and hit Start Path. The UI minimizes into a compact HUD while you drive. When you're done, End Path opens the save dialog. Your saved routes live in <code>KonstantAStar/&lt;gameId&gt;/</code> in your executor workspace and only appear inside the game they were recorded in.</p>
+      <p>To drive a saved route, sit in any vehicle near the path, open the Load tab, pick the route, and hit Start Drive. The HUD shows progress, speed, ETA, and what it's waiting on if something blocks the road. If a game's chassis ignores seat control, it falls back to simulated key input automatically.</p>
+      <div class="tag-row">
+        <span class="tag">Record</span>
+        <span class="tag">Rewind</span>
+        <span class="tag">Load</span>
+        <span class="tag">Auto-Drive</span>
+      </div>
     </div>
 
   </section>
@@ -816,7 +848,7 @@
     // ---- typewriter for hero-sub ----
     (function() {
       var el = document.getElementById('hero-sub');
-      var text = 'Precision tools for Roblox.\nUniversal bike script.';
+      var text = 'Precision tools for Roblox.\nUniversal bike script. Waypoint autodriver.';
       el.innerHTML = '';
       el.style.opacity = '1';
       el.style.animation = 'none';
@@ -855,6 +887,10 @@
         { text: 'Map Loader',        hi: false },
         { text: 'Config Saving',     hi: false },
         { text: 'Troll Module',      hi: false },
+        { text: 'Path Recording',    hi: true  },
+        { text: 'Auto-Drive',        hi: true  },
+        { text: 'Rewind Editing',    hi: false },
+        { text: 'Brake-and-Wait',    hi: false },
       ];
       var ROW1 = [
         { text: 'LinoriaLib UI',        hi: false },
@@ -869,6 +905,9 @@
         { text: 'Live Updates',         hi: false },
         { text: 'Dedup Guard',          hi: false },
         { text: 'Workspace Configs',    hi: false },
+        { text: 'Pure Pursuit',         hi: true  },
+        { text: 'Per-Game Saves',       hi: false },
+        { text: 'Self-Learning Paths',  hi: false },
       ];
 
       function buildTrack(items, reps) {

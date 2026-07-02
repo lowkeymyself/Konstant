@@ -752,6 +752,15 @@
         </div>
       </button>
 
+      <div class="nav-section-label" style="margin-top:14px;">Waypoint Autodriver</div>
+
+      <button class="tab-btn" data-target="astar">
+        <div class="left">
+          <span class="dot green"></span>
+          <span>Konstant A*</span>
+        </div>
+      </button>
+
     </div>
 
     <div class="sidebar-footer">
@@ -869,6 +878,24 @@
         <div class="aero-footer">Join any game with vehicles, and use Konstant Aero!</div>
       </div>
 
+      <!-- A* PANEL -->
+      <div class="tab-panel" id="panel-astar">
+        <div class="box-title">Konstant A* — record a path by driving it, then let the script drive it back. Universal, per-game saves.</div>
+
+        <div class="code-box">
+          <div class="code-box-header">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <div style="font-size:11px; color:var(--muted);">Lua — Waypoint autodriver</div>
+          </div>
+          <div class="code-box-content" id="code-astar">
+            <div class="load-view">loadstring(game:HttpGet("https://raw.githubusercontent.com/lowkeymyself/HowToAccountJadeShipClaudeTryHackMe/refs/heads/main/astar.lua"))()</div>
+          </div>
+          <div class="code-box-footer">
+            <button class="btn btn-primary" id="btn-copy-astar"><span>Copy</span></button>
+          </div>
+        </div>
+      </div>
+
       <!-- EXECUTOR REQUIREMENTS — what your executor must support to run Konstant -->
       <div class="feat-section">
         <div class="feat-section-hdr">Executor Requirements</div>
@@ -895,7 +922,7 @@
           </div>
 
         </div>
-        <div class="feat-footnote">All major executors (Solara, Wave, Synapse, Krnl, Fluxus, etc.) support this set. If a function is missing on your executor, the dependent feature silently no-ops rather than crashing the script.</div>
+        <div class="feat-footnote">Tested against the current scene — internals: Volt, Potassium, Synapse Z, Cosmic, Real (free). Mac: Opiumware. Mobile: Delta. Any 99% sUNC executor will run it. If a function is missing on yours, the dependent feature silently no-ops instead of crashing the script.</div>
       </div>
 
     </div>
@@ -1021,8 +1048,9 @@
         if (target === 'release')      pageTitle.textContent = 'Release Branch';
         else if (target === 'testing') pageTitle.textContent = 'Testing Branch';
         else if (target === 'aero')    pageTitle.textContent = 'Aero — Universal';
+        else if (target === 'astar')   pageTitle.textContent = 'A* — Waypoint Autodriver';
 
-        if (target !== 'aero') {
+        if (target === 'release' || target === 'testing') {
           topVer.textContent = target === 'release' ? state.relVer : state.tesVer;
           if (state.relVer !== 'v---') {
             document.getElementById('stat-branch').textContent = target;
@@ -1094,17 +1122,17 @@
       });
     });
 
-    // Aero copy (no source toggle — it's the same script as release)
-    (function () {
-      const cb = document.getElementById('btn-copy-aero');
+    // Aero + A* copy (no source toggle)
+    ['aero', 'astar'].forEach(env => {
+      const cb = document.getElementById(`btn-copy-${env}`);
       if (!cb) return;
       cb.addEventListener('click', () => {
-        const box = document.getElementById('code-aero');
+        const box = document.getElementById(`code-${env}`);
         const text = box.querySelector('.load-view').textContent;
         navigator.clipboard.writeText(text.trim());
         toast('Execution string copied.');
       });
-    })();
+    });
 
     // Fetch and sync data
     async function initData() {
